@@ -248,7 +248,10 @@ export default function LandingPage() {
                 stiffness: 100,
                 damping: 10
               }}
-              whileHover={{ scale: 1.05, rotate: [0, -2, 2, 0] }}
+              whileHover={{
+                scale: 1.05,
+                transition: { type: "spring", stiffness: 300, damping: 20 }
+              }}
               className="inline-flex items-center space-x-2 bg-gradient-to-r from-primary-100 to-accent-100 text-primary-700 px-6 py-3 rounded-full mb-6 shadow-lg border border-primary-200 relative overflow-hidden"
             >
               <motion.div
