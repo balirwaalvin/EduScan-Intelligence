@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { motion } from 'framer-motion'
 import LiquidCursor from '@/components/LiquidCursor'
 import BackgroundGradient from '@/components/BackgroundGradient'
 import {
@@ -28,9 +28,6 @@ import Link from 'next/link'
 
 export default function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const { scrollYProgress } = useScroll()
-  const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0])
-  const scale = useTransform(scrollYProgress, [0, 0.2], [1, 0.95])
 
 
   return (
@@ -239,7 +236,6 @@ export default function LandingPage() {
       <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 relative">
         <div className="max-w-7xl mx-auto">
           <motion.div
-            style={{ opacity, scale }}
             className="text-center relative"
           >
             {/* Floating Badge with Live Stats */}
