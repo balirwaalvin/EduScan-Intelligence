@@ -1,0 +1,176 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  TEACHER
+  CLASS_REP
+  STUDENT
+}
+
+enum AttendanceMethod {
+  QR_CODE
+  RFID
+  FACIAL_RECOGNITION
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  EXCUSED
+}
+
+enum SubscriptionStatus {
+  TRIAL
+  ACTIVE
+  EXPIRED
+  CANCELLED
+}
+
+model Organization {
+  id                String             @id @default(cuid())
+  name              String
+  type              String             // EDUCATIONAL or ENTERPRISE
+  email             String             @unique
+  phone             String?
+  address           String?
+  subscriptionStatus SubscriptionStatus @default(TRIAL)
+  trialStartDate    DateTime           @default(now())
+  trialEndDate      DateTime?
+  subscriptionEndDate DateTime?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  users             User[]
+  departments       Department[]
+  sessions          Session[]
+
+  @@index([email])
+}
+
+model User {
+  id                String       @id @default(cuid())
+  email             String       @unique
+  password          String
+  firstName         String
+  lastName          String
+  role              Role
+  rfidTag           String?      @unique
+  faceData          String?      // Base64 encoded face embeddings
+  phone             String?
+  department        Department?  @relation(fields: [departmentId], references: [id])
+  departmentId      String?
+  organization      Organization @relation(fields: [organizationId], references: [id])
+  organizationId    String
+  isActive          Boolean      @default(true)
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  createdSessions   Session[]    @relation("SessionCreator")
+  attendanceRecords AttendanceRecord[]
+  notifications     Notification[]
+
+  @@index([email])
+  @@index([rfidTag])
+  @@index([organizationId])
+}
+
+model Department {
+  id             String       @id @default(cuid())
+  name           String
+  code           String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId String
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  users          User[]
+  courses        Course[]
+
+  @@unique([code, organizationId])
+  @@index([organizationId])
+}
+
+model Course {
+  id             String     @id @default(cuid())
+  name           String
+  code           String
+  description    String?
+  department     Department @relation(fields: [departmentId], references: [id])
+  departmentId   String
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  sessions       Session[]
+
+  @@unique([code, departmentId])
+  @@index([departmentId])
+}
+
+model Session {
+  id                String           @id @default(cuid())
+  name              String
+  course            Course           @relation(fields: [courseId], references: [id])
+  courseId          String
+  organization      Organization     @relation(fields: [organizationId], references: [id])
+  organizationId    String
+  creator           User             @relation("SessionCreator", fields: [creatorId], references: [id])
+  creatorId         String
+  startTime         DateTime
+  endTime           DateTime
+  allowedMethods    AttendanceMethod[]
+  qrCode            String?          // Generated QR code data
+  qrCodeExpiry      DateTime?
+  location          String?
+  isActive          Boolean          @default(true)
+  autoCloseOnEnd    Boolean          @default(true)
+  lateThreshold     Int              @default(15) // minutes
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+
+  attendanceRecords AttendanceRecord[]
+
+  @@index([organizationId])
+  @@index([courseId])
+  @@index([creatorId])
+  @@index([startTime])
+}
+
+model AttendanceRecord {
+  id              String           @id @default(cuid())
+  session         Session          @relation(fields: [sessionId], references: [id])
+  sessionId       String
+  user            User             @relation(fields: [userId], references: [id])
+  userId          String
+  status          AttendanceStatus
+  method          AttendanceMethod
+  markedAt        DateTime         @default(now())
+  location        String?
+  notes           String?
+
+  @@unique([sessionId, userId])
+  @@index([sessionId])
+  @@index([userId])
+  @@index([markedAt])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  title     String
+  message   String
+  type      String   // INFO, WARNING, SUCCESS, ERROR
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
+}
