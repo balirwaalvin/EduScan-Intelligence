@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
-import { comparePassword, generateToken } from '@/lib/auth'
+import { authService } from '@/lib/services/auth.service'
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,73 +14,52 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Find user by email
-    const user = await prisma.user.findUnique({
-      where: { email },
-      include: {
-        organization: true,
-      },
-    })
+    // Login with Appwrite
+    console.log('Attempting login for:', email)
+    const loginResult = await authService.login({ email, password })
 
-    if (!user) {
+    if (!loginResult.success) {
+      console.error('Login failed:', loginResult.error)
       return NextResponse.json(
-        { error: 'Invalid email or password' },
+        { error: loginResult.error || 'Invalid email or password' },
         { status: 401 }
       )
     }
 
-    // Check if user is active
-    if (!user.isActive) {
+    console.log('Login successful, getting user details...')
+    // Get user details
+    const userResult = await authService.getCurrentUser()
+
+    if (!userResult.success || !userResult.user) {
+      console.error('Failed to get user:', userResult.error)
       return NextResponse.json(
-        { error: 'Your account has been deactivated' },
-        { status: 403 }
+        { error: 'Failed to retrieve user information' },
+        { status: 500 }
       )
     }
 
-    // Check if organization subscription is valid
-    if (user.organization.subscriptionStatus === 'EXPIRED') {
-      return NextResponse.json(
-        { error: 'Your organization subscription has expired' },
-        { status: 403 }
-      )
-    }
+    const user = userResult.user
+    console.log('User retrieved:', user.$id, user.email)
 
-    // Verify password
-    const isPasswordValid = await comparePassword(password, user.password)
-
-    if (!isPasswordValid) {
-      return NextResponse.json(
-        { error: 'Invalid email or password' },
-        { status: 401 }
-      )
-    }
-
-    // Generate JWT token
-    const token = generateToken({
-      userId: user.id,
-      email: user.email,
-      role: user.role,
-      organizationId: user.organizationId,
-    })
-
-    // Return user data (without password) and token
-    const { password: _, ...userWithoutPassword } = user
-
+    // Return success response with user data
     return NextResponse.json(
       {
         success: true,
-        token,
         user: {
-          ...userWithoutPassword,
-          organization: user.organization,
+          id: user.$id,
+          email: user.email,
+          name: user.name,
+          emailVerification: user.emailVerification,
+          status: user.status,
         },
+        message: 'Login successful'
       },
       { status: 200 }
     )
-  } catch (error) {
+  } catch (error: any) {
     console.error('Login error:', error)
     return NextResponse.json(
-      { error: 'Failed to login' },
+      { error: error.message || 'Failed to login' },
       { status: 500 }
     )
   }

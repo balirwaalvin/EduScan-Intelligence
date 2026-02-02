@@ -33,23 +33,9 @@ export default function LoginPage() {
         throw new Error(data.error || 'Login failed')
       }
 
-      // Store token in localStorage
-      localStorage.setItem('token', data.token)
-
-      // Redirect based on role
-      switch (data.user.role) {
-        case 'ADMIN':
-          router.push('/dashboard/admin')
-          break
-        case 'TEACHER':
-          router.push('/dashboard/teacher')
-          break
-        case 'CLASS_REP':
-          router.push('/dashboard/class-rep')
-          break
-        default:
-          router.push('/dashboard')
-      }
+      // Appwrite handles sessions via cookies, no need to store token
+      // Just redirect to dashboard
+      router.push('/dashboard/admin')
     } catch (err: any) {
       setError(err.message)
     } finally {
