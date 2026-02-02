@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Admin Account - EduScan</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        .info-box h3 {
+            color: #333;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            font-size: 14px;
+        }
+
+        .info-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .info-value {
+            color: #333;
+            font-family: monospace;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-bottom: 15px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .result.success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .result.error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .result.show {
+            display: block;
+        }
+
+        .loading {
+            text-align: center;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .success-icon {
+            font-size: 48px;
+            text-align: center;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .success-icon.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Create Admin Account</h1>
+        <p class="subtitle">Initialize your EduScan system with an admin account</p>
+
+        <div class="info-box">
+            <h3>📋 Admin Account Details:</h3>
+            <div class="info-item">
+                <span class="info-label">Email:</span>
+                <span class="info-value">admin@edu-scan.app</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Password:</span>
+                <span class="info-value">admin123</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Name:</span>
+                <span class="info-value">System Administrator</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Plan:</span>
+                <span class="info-value">Enterprise</span>
+            </div>
+        </div>
+
+        <button id="createBtn" onclick="createAdmin()">
+            ✨ Create Admin Account
+        </button>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p style="margin-top: 15px; color: #666;">Creating admin account...</p>
+        </div>
+
+        <div class="success-icon" id="successIcon">
+            🎉
+        </div>
+
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        async function createAdmin() {
+            const btn = document.getElementById('createBtn');
+            const loading = document.getElementById('loading');
+            const result = document.getElementById('result');
+            const successIcon = document.getElementById('successIcon');
+
+            // Disable button and show loading
+            btn.disabled = true;
+            loading.classList.add('show');
+            result.classList.remove('show');
+            successIcon.classList.remove('show');
+
+            try {
+                const response = await fetch('/api/setup/create-admin', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                loading.classList.remove('show');
+                result.classList.add('show');
+
+                if (data.success) {
+                    successIcon.classList.add('show');
+                    result.classList.add('success');
+                    result.innerHTML = `
+                        <h3 style="margin-bottom: 10px;">✅ Success!</h3>
+                        <p style="margin-bottom: 10px;">Admin account created successfully!</p>
+                        <div style="background: white; padding: 10px; border-radius: 5px; margin-top: 10px;">
+                            <strong>User ID:</strong> ${data.data.user.id}<br>
+                            <strong>Organization ID:</strong> ${data.data.organization.id}<br>
+                            <strong>Plan:</strong> ${data.data.organization.plan}
+                        </div>
+                        <p style="margin-top: 15px;">
+                            <strong>You can now login at:</strong><br>
+                            <a href="/login" style="color: #667eea;">http://localhost:3002/login</a>
+                        </p>
+                    `;
+                    btn.textContent = '✅ Account Created!';
+                    btn.style.background = '#28a745';
+                } else {
+                    result.classList.add('error');
+                    result.innerHTML = `
+                        <h3 style="margin-bottom: 10px;">❌ Error</h3>
+                        <p><strong>Step:</strong> ${data.step}</p>
+                        <p><strong>Error:</strong> ${data.error}</p>
+                        ${data.userId ? `<p><strong>User ID:</strong> ${data.userId}</p>` : ''}
+                        <p style="margin-top: 10px; font-size: 12px;">
+                            Check the console for more details.
+                        </p>
+                    `;
+                    btn.disabled = false;
+                }
+            } catch (error) {
+                loading.classList.remove('show');
+                result.classList.add('show', 'error');
+                result.innerHTML = `
+                    <h3 style="margin-bottom: 10px;">❌ Network Error</h3>
+                    <p>${error.message}</p>
+                    <p style="margin-top: 10px;">Make sure your development server is running.</p>
+                `;
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
