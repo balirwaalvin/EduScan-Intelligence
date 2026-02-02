@@ -1,4 +1,4 @@
-import { account } from './appwrite';
+import { account } from '../appwrite';
 import { ID } from 'appwrite';
 
 /**
