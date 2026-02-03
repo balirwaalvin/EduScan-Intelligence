@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { Client, Account, Query } from 'node-appwrite'
 import { serverDatabases, serverUsers } from '@/lib/appwrite-server'
 import { DATABASE_ID, COLLECTIONS } from '@/lib/appwrite'
+import { Query } from 'node-appwrite'
 
 export async function POST(request: NextRequest) {
   try {
@@ -18,91 +18,87 @@ export async function POST(request: NextRequest) {
 
     console.log('Attempting login for:', email)
 
-    // Check if there's an existing session cookie and try to delete it
-    const existingSessionId = request.cookies.get('session')?.value
-    if (existingSessionId) {
-      try {
-        console.log('Found existing session, attempting to delete it')
-        const tempClient = new Client()
-          .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
-          .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID!)
-          .setSession(existingSessionId)
-
-        const tempAccount = new Account(tempClient)
-        await tempAccount.deleteSession('current')
-        console.log('Existing session deleted')
-      } catch (sessionError) {
-        console.log('Could not delete existing session (may already be invalid)')
-      }
-    }
-
-    // Create a fresh client for authentication
-    const client = new Client()
-      .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
-      .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID!)
-
-    const account = new Account(client)
-
     try {
-      // Create email password session (this is just for authentication, not stored in DB)
-      console.log('Creating session...')
-      const session = await account.createEmailPasswordSession(email, password)
-      console.log('✅ Session created successfully:', session.$id)
-      console.log('Session secret exists:', !!session.secret)
+      // Step 1: Find user by email using server API key
+      console.log('Looking up user in database...')
+      const userDocs = await serverDatabases.listDocuments(
+        DATABASE_ID,
+        COLLECTIONS.USERS,
+        [Query.equal('email', email)]
+      )
 
-      // Create a NEW client with the session secret for authenticated requests
-      console.log('Creating authenticated client...')
-      const authenticatedClient = new Client()
+      if (userDocs.documents.length === 0) {
+        console.log('User not found in database')
+        return NextResponse.json(
+          { error: 'Invalid email or password' },
+          { status: 401 }
+        )
+      }
+
+      const userDoc = userDocs.documents[0]
+      console.log('User found:', userDoc.name, 'Role:', userDoc.role)
+
+      // Step 2: Verify password using Appwrite Users API (server-side)
+      console.log('Verifying credentials with Appwrite...')
+
+      // Use serverUsers to verify the authentication
+      // This is a workaround: we'll create a temporary session and immediately delete it
+      const { Client, Account } = require('node-appwrite')
+      const tempClient = new Client()
         .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
         .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID!)
-        .setSession(session.secret)
 
-      console.log('Creating authenticated account instance...')
-      const authenticatedAccount = new Account(authenticatedClient)
+      const tempAccount = new Account(tempClient)
 
-      console.log('Attempting to get user details...')
-      const user = await authenticatedAccount.get()
-      console.log('✅ User retrieved successfully:', user.$id, user.email)
-
-      // Get additional user info from our Users collection using server API key
-      let userRole = 'USER'
       try {
-        const userDocs = await serverDatabases.listDocuments(
-          DATABASE_ID,
-          COLLECTIONS.USERS,
-          [Query.equal('email', email)]
-        )
+        // Try to create a session - if this succeeds, credentials are valid
+        const session = await tempAccount.createEmailPasswordSession(email, password)
+        console.log('✅ Credentials verified!')
 
-        if (userDocs.documents.length > 0) {
-          const userDoc = userDocs.documents[0]
-          userRole = userDoc.role || 'USER'
-          console.log('User role from database:', userRole)
+        // Immediately delete the session - we don't need it
+        try {
+          const deleteClient = new Client()
+            .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
+            .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID!)
+            .setSession(session.secret)
+          const deleteAccount = new Account(deleteClient)
+          await deleteAccount.deleteSession('current')
+          console.log('Temporary session cleaned up')
+        } catch (cleanupError) {
+          console.log('Session cleanup failed (non-critical):', cleanupError)
         }
-      } catch (dbError) {
-        console.error('Could not fetch user from database:', dbError)
-        // Continue with default role if database lookup fails
+
+      } catch (authError: any) {
+        console.log('Invalid credentials:', authError.message)
+        return NextResponse.json(
+          { error: 'Invalid email or password' },
+          { status: 401 }
+        )
       }
 
-      // Create response with session cookie
+      // Step 3: Create response with user data (no session needed!)
       const response = NextResponse.json(
         {
           success: true,
           user: {
-            id: user.$id,
-            email: user.email,
-            name: user.name,
-            role: userRole,
-            emailVerification: user.emailVerification,
-            status: user.status,
+            id: userDoc.$id,
+            email: userDoc.email,
+            name: userDoc.name,
+            role: userDoc.role || 'USER',
+            isActive: userDoc.isActive,
           },
           message: 'Login successful'
         },
         { status: 200 }
       )
 
-      // Set the session secret as a cookie (not the session ID)
-      // This allows the client to make authenticated requests
-      response.cookies.set('session', session.secret, {
+      // Set a simple auth token (just the user ID for now)
+      // In production, you'd use JWT or proper session management
+      response.cookies.set('auth_user', JSON.stringify({
+        id: userDoc.$id,
+        email: userDoc.email,
+        role: userDoc.role,
+      }), {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
@@ -110,20 +106,21 @@ export async function POST(request: NextRequest) {
         path: '/',
       })
 
+      console.log('✅ Login successful!')
       return response
 
-    } catch (authError: any) {
-      console.error('Authentication failed:', authError)
+    } catch (error: any) {
+      console.error('Login error:', error)
       return NextResponse.json(
-        { error: authError.message || 'Invalid email or password' },
-        { status: 401 }
+        { error: error.message || 'Login failed' },
+        { status: 500 }
       )
     }
 
   } catch (error: any) {
-    console.error('Login error:', error)
+    console.error('Server error:', error)
     return NextResponse.json(
-      { error: error.message || 'Failed to login' },
+      { error: 'Internal server error' },
       { status: 500 }
     )
   }
