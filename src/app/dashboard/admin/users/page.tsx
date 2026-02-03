@@ -108,6 +108,7 @@ export default function UsersPage() {
         ...formData,
         name: `${formData.firstName} ${formData.lastName}`.trim(),
         organizationId: user.id,
+        isActive: true, // Set user as active by default
       }
 
       const response = await fetch('/api/users', {
