@@ -57,7 +57,26 @@ export const departmentService = {
         COLLECTIONS.ORGANIZATIONS,
         'unique()',
         {
-          ...departmentData,
+          name: departmentData.name,
+          email: `${departmentData.code.toLowerCase()}@department.local`, // Generate email from code
+          adminId: departmentData.organizationId, // Use org ID as admin
+          plan: 'DEPARTMENT', // Mark as department type
+          subscriptionStatus: 'ACTIVE',
+          autoCheckout: false,
+          lateThresholdMinutes: 15,
+          timezone: 'UTC',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          // Custom department fields (can be stored as metadata)
+          departmentCode: departmentData.code,
+        }
+      );
+
+      return { success: true, department };
+    } catch (error: any) {
+      return { success: false, error: error.message };
+    }
+  },
           createdAt: new Date().toISOString(),
         }
       );
@@ -73,11 +92,21 @@ export const departmentService = {
    */
   async updateDepartment(departmentId: string, updates: any) {
     try {
+      const updateData: any = {
+        updatedAt: new Date().toISOString(),
+      };
+
+      if (updates.name) updateData.name = updates.name;
+      if (updates.code) {
+        updateData.departmentCode = updates.code;
+        updateData.email = `${updates.code.toLowerCase()}@department.local`;
+      }
+
       const department = await serverDatabases.updateDocument(
         DATABASE_ID,
         COLLECTIONS.ORGANIZATIONS,
         departmentId,
-        updates
+        updateData
       );
 
       return { success: true, department };
