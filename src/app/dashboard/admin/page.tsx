@@ -10,20 +10,24 @@ import {
   TrendingUp,
   Clock,
   CheckCircle2,
-  XCircle,
-  AlertCircle,
   QrCode,
   Radio,
   Scan as ScanIcon,
   ArrowUp,
   ArrowDown,
+  Plus,
+  FileText,
+  Download,
+  RefreshCw,
 } from 'lucide-react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts'
+import Link from 'next/link'
 
 export default function AdminDashboard() {
   const router = useRouter()
   const [user, setUser] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [refreshing, setRefreshing] = useState(false)
   const [stats, setStats] = useState({
     totalUsers: 0,
     totalSessions: 0,
@@ -34,6 +38,60 @@ export default function AdminDashboard() {
     totalClassReps: 0,
     attendanceToday: 0,
   })
+  const [weeklyData, setWeeklyData] = useState<any[]>([])
+  const [methodData, setMethodData] = useState<any[]>([])
+  const [recentSessions, setRecentSessions] = useState<any[]>([])
+
+  const fetchDashboardData = async (organizationId: string) => {
+    try {
+      setRefreshing(true)
+
+      // Fetch analytics summary
+      const summaryRes = await fetch(`/api/analytics?organizationId=${organizationId}&action=summary`)
+      if (summaryRes.ok) {
+        const summary = await summaryRes.json()
+        setStats((prev) => ({ ...prev, ...summary }))
+      }
+
+      // Fetch user stats
+      const userStatsRes = await fetch(`/api/users?organizationId=${organizationId}&action=stats`)
+      if (userStatsRes.ok) {
+        const userStats = await userStatsRes.json()
+        setStats((prev) => ({
+          ...prev,
+          totalUsers: userStats.total,
+          totalStudents: userStats.students,
+          totalTeachers: userStats.teachers,
+          totalClassReps: userStats.classReps,
+        }))
+      }
+
+      // Fetch weekly attendance
+      const weeklyRes = await fetch(`/api/analytics?organizationId=${organizationId}&action=weekly`)
+      if (weeklyRes.ok) {
+        const weekly = await weeklyRes.json()
+        setWeeklyData(weekly.data)
+      }
+
+      // Fetch method distribution
+      const methodsRes = await fetch(`/api/analytics?organizationId=${organizationId}&action=methods`)
+      if (methodsRes.ok) {
+        const methods = await methodsRes.json()
+        setMethodData(methods.data)
+      }
+
+      // Fetch today's sessions
+      const sessionsRes = await fetch(`/api/sessions?organizationId=${organizationId}&action=today`)
+      if (sessionsRes.ok) {
+        const sessions = await sessionsRes.json()
+        setRecentSessions(sessions.sessions.slice(0, 5))
+      }
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error)
+    } finally {
+      setRefreshing(false)
+    }
+  }
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -49,18 +107,8 @@ export default function AdminDashboard() {
           emailVerification: currentUser.emailVerification,
         })
 
-        // Mock data for demonstration
-        // In production, fetch from API
-        setStats({
-          totalUsers: 1250,
-          totalSessions: 456,
-          activeSessionsToday: 12,
-          averageAttendance: 87.5,
-          totalStudents: 1050,
-          totalTeachers: 180,
-          totalClassReps: 20,
-          attendanceToday: 892,
-        })
+        // Fetch real dashboard data
+        await fetchDashboardData(currentUser.$id)
       } catch (error) {
         console.error('Authentication check failed:', error)
         // Not authenticated, redirect to login
@@ -72,6 +120,12 @@ export default function AdminDashboard() {
 
     checkAuth()
   }, [router])
+
+  const handleRefresh = () => {
+    if (user?.id) {
+      fetchDashboardData(user.id)
+    }
+  }
 
   if (loading) {
     return (
@@ -87,22 +141,6 @@ export default function AdminDashboard() {
   if (!user) {
     return null
   }
-
-  const weeklyData = [
-    { day: 'Mon', attendance: 850 },
-    { day: 'Tue', attendance: 920 },
-    { day: 'Wed', attendance: 880 },
-    { day: 'Thu', attendance: 950 },
-    { day: 'Fri', attendance: 892 },
-    { day: 'Sat', attendance: 300 },
-    { day: 'Sun', attendance: 150 },
-  ]
-
-  const methodData = [
-    { method: 'QR Code', count: 450 },
-    { method: 'RFID', count: 320 },
-    { method: 'Face ID', count: 122 },
-  ]
 
   const statCards = [
     {
@@ -145,47 +183,28 @@ export default function AdminDashboard() {
     { label: 'Class Reps', count: stats.totalClassReps, color: 'bg-pink-500' },
   ]
 
-  const recentSessions = [
-    {
-      id: 1,
-      course: 'Computer Science 101',
-      teacher: 'Dr. Smith',
-      time: '09:00 AM',
-      attendance: 45,
-      total: 50,
-      method: 'QR Code',
-    },
-    {
-      id: 2,
-      course: 'Mathematics 201',
-      teacher: 'Prof. Johnson',
-      time: '10:30 AM',
-      attendance: 38,
-      total: 40,
-      method: 'RFID',
-    },
-    {
-      id: 3,
-      course: 'Physics 301',
-      teacher: 'Dr. Williams',
-      time: '02:00 PM',
-      attendance: 52,
-      total: 55,
-      method: 'Face ID',
-    },
-  ]
-
   return (
     <DashboardLayout role="ADMIN" user={user}>
       <div className="space-y-6">
-        {/* Welcome Section */}
+        {/* Welcome Section with Refresh */}
         <div className="bg-gradient-to-r from-primary-600 to-accent-600 rounded-2xl p-8 text-white">
-          <h1 className="text-3xl font-bold mb-2">
-            Welcome back, {user?.firstName}! 👋
-          </h1>
-          <p className="text-white/90">
-            Here's what's happening with your organization today.
-          </p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold mb-2">
+                Welcome back, {user?.name}! 👋
+              </h1>
+              <p className="text-white/90">
+                Here's what's happening with your organization today.
+              </p>
+            </div>
+            <button
+              onClick={handleRefresh}
+              disabled={refreshing}
+              className="bg-white/20 hover:bg-white/30 p-3 rounded-lg transition disabled:opacity-50"
+            >
+              <RefreshCw className={`w-6 h-6 ${refreshing ? 'animate-spin' : ''}`} />
+            </button>
+          </div>
         </div>
 
         {/* Stats Grid */}
@@ -280,56 +299,63 @@ export default function AdminDashboard() {
             </div>
 
             <div className="mt-6 pt-6 border-t">
-              <button className="w-full bg-gradient-to-r from-primary-600 to-accent-600 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition">
-                Create New User
-              </button>
+              <Link href="/dashboard/admin/users">
+                <button className="w-full bg-gradient-to-r from-primary-600 to-accent-600 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition">
+                  <Plus className="w-5 h-5 inline mr-2" />
+                  Manage Users
+                </button>
+              </Link>
             </div>
           </div>
 
           {/* Recent Sessions */}
           <div className="lg:col-span-2 bg-white rounded-xl shadow-sm p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Recent Sessions</h2>
-            <div className="space-y-4">
-              {recentSessions.map((session) => (
-                <div
-                  key={session.id}
-                  className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:border-primary-300 transition"
-                >
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-gray-900">{session.course}</h3>
-                    <p className="text-sm text-gray-600">
-                      {session.teacher} • {session.time}
-                    </p>
-                  </div>
-                  <div className="flex items-center space-x-4">
-                    <div className="text-right">
-                      <p className="text-sm font-semibold text-gray-900">
-                        {session.attendance}/{session.total}
-                      </p>
-                      <p className="text-xs text-gray-600">
-                        {Math.round((session.attendance / session.total) * 100)}%
+            <h2 className="text-xl font-bold text-gray-900 mb-4">Today's Sessions</h2>
+            {recentSessions.length > 0 ? (
+              <div className="space-y-4">
+                {recentSessions.map((session: any) => (
+                  <div
+                    key={session.$id}
+                    className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:border-primary-300 transition"
+                  >
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-gray-900">{session.name}</h3>
+                      <p className="text-sm text-gray-600">
+                        {new Date(session.startTime).toLocaleTimeString('en-US', {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
                       </p>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      {session.method === 'QR Code' && (
-                        <QrCode className="w-5 h-5 text-blue-500" />
-                      )}
-                      {session.method === 'RFID' && (
-                        <Radio className="w-5 h-5 text-purple-500" />
-                      )}
-                      {session.method === 'Face ID' && (
-                        <ScanIcon className="w-5 h-5 text-pink-500" />
-                      )}
+                    <div className="flex items-center space-x-4">
+                      <div className="flex items-center space-x-2">
+                        {session.allowedMethods?.includes('QR_CODE') && (
+                          <QrCode className="w-5 h-5 text-blue-500" />
+                        )}
+                        {session.allowedMethods?.includes('RFID') && (
+                          <Radio className="w-5 h-5 text-purple-500" />
+                        )}
+                        {session.allowedMethods?.includes('FACIAL_RECOGNITION') && (
+                          <ScanIcon className="w-5 h-5 text-pink-500" />
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <Calendar className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                <p className="text-gray-500">No sessions scheduled for today</p>
+              </div>
+            )}
 
             <div className="mt-6">
-              <button className="w-full bg-gray-100 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-200 transition">
-                View All Sessions
-              </button>
+              <Link href="/dashboard/admin/sessions">
+                <button className="w-full bg-gray-100 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-200 transition">
+                  View All Sessions
+                </button>
+              </Link>
             </div>
           </div>
         </div>
@@ -338,20 +364,26 @@ export default function AdminDashboard() {
         <div className="bg-white rounded-xl shadow-sm p-6">
           <h2 className="text-xl font-bold text-gray-900 mb-4">Quick Actions</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Link href="/dashboard/admin/users">
+              <button className="w-full flex items-center space-x-3 p-4 border-2 border-gray-200 rounded-lg hover:border-primary-500 hover:bg-primary-50 transition">
+                <Users className="w-6 h-6 text-primary-600" />
+                <span className="font-semibold text-gray-900">Manage Users</span>
+              </button>
+            </Link>
+            <Link href="/dashboard/admin/sessions">
+              <button className="w-full flex items-center space-x-3 p-4 border-2 border-gray-200 rounded-lg hover:border-primary-500 hover:bg-primary-50 transition">
+                <Calendar className="w-6 h-6 text-primary-600" />
+                <span className="font-semibold text-gray-900">Sessions</span>
+              </button>
+            </Link>
+            <Link href="/dashboard/admin/analytics">
+              <button className="w-full flex items-center space-x-3 p-4 border-2 border-gray-200 rounded-lg hover:border-primary-500 hover:bg-primary-50 transition">
+                <TrendingUp className="w-6 h-6 text-primary-600" />
+                <span className="font-semibold text-gray-900">Analytics</span>
+              </button>
+            </Link>
             <button className="flex items-center space-x-3 p-4 border-2 border-gray-200 rounded-lg hover:border-primary-500 hover:bg-primary-50 transition">
-              <Users className="w-6 h-6 text-primary-600" />
-              <span className="font-semibold text-gray-900">Create User</span>
-            </button>
-            <button className="flex items-center space-x-3 p-4 border-2 border-gray-200 rounded-lg hover:border-primary-500 hover:bg-primary-50 transition">
-              <Calendar className="w-6 h-6 text-primary-600" />
-              <span className="font-semibold text-gray-900">New Session</span>
-            </button>
-            <button className="flex items-center space-x-3 p-4 border-2 border-gray-200 rounded-lg hover:border-primary-500 hover:bg-primary-50 transition">
-              <TrendingUp className="w-6 h-6 text-primary-600" />
-              <span className="font-semibold text-gray-900">View Reports</span>
-            </button>
-            <button className="flex items-center space-x-3 p-4 border-2 border-gray-200 rounded-lg hover:border-primary-500 hover:bg-primary-50 transition">
-              <Clock className="w-6 h-6 text-primary-600" />
+              <Download className="w-6 h-6 text-primary-600" />
               <span className="font-semibold text-gray-900">Export Data</span>
             </button>
           </div>
