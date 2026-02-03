@@ -25,6 +25,7 @@ export async function POST(request: NextRequest) {
     const account = new Account(client)
 
     try {
+
       // Create email password session
       const session = await account.createEmailPasswordSession(email, password)
       console.log('Session created successfully')
