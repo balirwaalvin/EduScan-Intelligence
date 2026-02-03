@@ -78,9 +78,31 @@ export default function TrialPage() {
             <span>Back to Home</span>
           </Link>
 
+          {/* Logo with Glow Effect */}
+          <motion.div
+            className="flex justify-center items-center mb-6"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="relative">
+              {/* Glow effect layers */}
+              <div className="absolute inset-0 bg-gradient-to-r from-primary-500 via-purple-500 to-accent-500 rounded-2xl blur-2xl opacity-30 animate-pulse"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-primary-400 to-accent-400 rounded-2xl blur-xl opacity-20"></div>
+
+              {/* Logo */}
+              <img
+                src="/eduscan-logo.png"
+                alt="EduScan Logo"
+                className="relative h-24 w-auto drop-shadow-2xl"
+              />
+            </div>
+          </motion.div>
+
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
             className="inline-flex items-center space-x-2 bg-primary-100 text-primary-700 px-4 py-2 rounded-full mb-6"
           >
             <Sparkles className="w-5 h-5" />

@@ -35,10 +35,20 @@ The custom EduScan logo has been successfully integrated throughout the applicat
 
 ## Logo Specifications Used
 
-All logo implementations use consistent sizing:
-- **Navigation/Header**: `h-10` (40px height, auto width)
-- **Login Page**: `h-12` (48px height, auto width)
+All logo implementations use consistent sizing with enhanced visual effects:
+- **Navigation/Header (Landing Page)**: `h-10` (40px height, auto width)
+- **Login Page**: `h-24` (96px height, auto width) - **Enhanced with glow effects**
+- **Trial Page**: `h-24` (96px height, auto width) - **Enhanced with glow effects**
 - **Create Admin Page**: `60px height, auto width`
+
+### Enhanced Logo Features (Login & Trial Pages)
+- ✨ **Size**: Doubled from h-12 to h-24 for better visibility
+- 🎯 **Positioning**: Perfectly centered using flexbox
+- 💫 **Glow Effects**: Multi-layered gradient glow with:
+  - Outer pulsing glow (blur-2xl, opacity-40/30)
+  - Inner static glow (blur-xl, opacity-30/20)
+  - Drop shadow for depth
+  - Gradient colors matching brand (primary → purple → accent)
 
 ## Technical Details
 
@@ -50,13 +60,36 @@ All logo implementations use consistent sizing:
 <span className="text-2xl font-bold gradient-text">EduScan</span>
 ```
 
-### After
+### After (Landing Page - Simple)
 ```tsx
 <img 
   src="/eduscan-logo.png" 
   alt="EduScan Logo" 
   className="h-10 w-auto"
 />
+```
+
+### After (Login/Trial Pages - Enhanced with Glow)
+```tsx
+<motion.div
+  className="flex justify-center items-center mb-8"
+  initial={{ opacity: 0, scale: 0.8 }}
+  animate={{ opacity: 1, scale: 1 }}
+  transition={{ duration: 0.5 }}
+>
+  <div className="relative">
+    {/* Glow effect layers */}
+    <div className="absolute inset-0 bg-gradient-to-r from-primary-500 via-purple-500 to-accent-500 rounded-2xl blur-2xl opacity-40 animate-pulse"></div>
+    <div className="absolute inset-0 bg-gradient-to-r from-primary-400 to-accent-400 rounded-2xl blur-xl opacity-30"></div>
+    
+    {/* Logo */}
+    <img
+      src="/eduscan-logo.png"
+      alt="EduScan Logo"
+      className="relative h-24 w-auto drop-shadow-2xl"
+    />
+  </div>
+</motion.div>
 ```
 
 ## Benefits
@@ -76,9 +109,10 @@ The development server is running on `http://localhost:3002`. You can verify the
 1. `public/eduscan-logo.png` (new file)
 2. `src/app/page.tsx`
 3. `src/components/DashboardLayout.tsx`
-4. `src/app/login/page.tsx`
-5. `public/create-admin.html`
-6. `src/app/layout.tsx`
+4. `src/app/login/page.tsx` - **Enhanced with glow effects**
+5. `src/app/trial/page.tsx` - **Added logo with glow effects**
+6. `public/create-admin.html`
+7. `src/app/layout.tsx`
 
 ---
 *Integration completed successfully on February 3, 2026*
