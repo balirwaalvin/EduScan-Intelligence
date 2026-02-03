@@ -103,13 +103,17 @@ export default function UsersPage() {
     setSuccess('')
 
     try {
+      // Combine firstName and lastName into name field (required by Appwrite)
+      const userData = {
+        ...formData,
+        name: `${formData.firstName} ${formData.lastName}`.trim(),
+        organizationId: user.id,
+      }
+
       const response = await fetch('/api/users', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...formData,
-          organizationId: user.id,
-        }),
+        body: JSON.stringify(userData),
       })
 
       if (response.ok) {
@@ -141,13 +145,17 @@ export default function UsersPage() {
     setSuccess('')
 
     try {
+      // Combine firstName and lastName into name field (required by Appwrite)
+      const userData = {
+        userId: selectedUser.$id,
+        ...formData,
+        name: `${formData.firstName} ${formData.lastName}`.trim(),
+      }
+
       const response = await fetch('/api/users', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId: selectedUser.$id,
-          ...formData,
-        }),
+        body: JSON.stringify(userData),
       })
 
       if (response.ok) {
