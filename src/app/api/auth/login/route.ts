@@ -48,9 +48,14 @@ export async function POST(request: NextRequest) {
       const session = await account.createEmailPasswordSession(email, password)
       console.log('Session created successfully:', session.$id)
 
-      // Now use the session to get user details
-      client.setSession(session.secret)
-      const user = await account.get()
+      // Create a NEW client with the session secret for authenticated requests
+      const authenticatedClient = new Client()
+        .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
+        .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID!)
+        .setSession(session.secret)
+
+      const authenticatedAccount = new Account(authenticatedClient)
+      const user = await authenticatedAccount.get()
       console.log('User retrieved:', user.$id, user.email)
 
       // Get additional user info from our Users collection using server API key

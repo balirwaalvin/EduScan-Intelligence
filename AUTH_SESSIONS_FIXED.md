@@ -107,18 +107,29 @@ response.cookies.set('session', session.secret, {...})
 
 ### **2. Setting Session on Client:**
 
-**Before:**
+**Before (BROKEN):**
 ```typescript
 // Tried to use account without session
 const user = await account.get() // ❌ Guest role error
+
+// OR - Setting session on existing client (ALSO BROKEN)
+client.setSession(session.secret)
+const user = await account.get() // ❌ Still guest role error
 ```
 
-**After:**
+**After (FIXED):**
 ```typescript
-// Set session first, then access
-client.setSession(session.secret)
-const user = await account.get() // ✅ Works!
+// Create NEW client with session, then NEW account instance
+const authenticatedClient = new Client()
+  .setEndpoint(...)
+  .setProject(...)
+  .setSession(session.secret)  // Set session on NEW client
+
+const authenticatedAccount = new Account(authenticatedClient)
+const user = await authenticatedAccount.get() // ✅ Works!
 ```
+
+**Key Point:** You MUST create a new Client and Account instance with the session. Setting session on an existing instance doesn't work!
 
 ### **3. Fetching User Role:**
 
