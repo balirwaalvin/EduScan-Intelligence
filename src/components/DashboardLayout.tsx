@@ -3,7 +3,6 @@
 import { ReactNode, useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { account } from '@/lib/appwrite'
 import AnimatedBubbles from '@/components/AnimatedBubbles'
 import {
   LayoutDashboard,
@@ -40,8 +39,8 @@ export default function DashboardLayout({ children, role, user }: DashboardLayou
 
   const handleLogout = async () => {
     try {
-      // Delete current session with Appwrite
-      await account.deleteSession('current')
+      // Call logout API to clear cookies
+      await fetch('/api/auth/logout', { method: 'POST' })
       console.log('Logged out successfully')
     } catch (error) {
       console.error('Logout error:', error)

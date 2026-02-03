@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import DashboardLayout from '@/components/DashboardLayout'
-import { account } from '@/lib/appwrite'
 import {
   Users,
   Calendar,
@@ -96,8 +95,16 @@ export default function AdminDashboard() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        // Check if user is authenticated with Appwrite
-        const currentUser = await account.get()
+        // Check if user is authenticated via our API
+        const response = await fetch('/api/auth/me')
+
+        if (!response.ok) {
+          throw new Error('Not authenticated')
+        }
+
+        const data = await response.json()
+        const currentUser = data.user
+
         console.log('Authenticated user:', currentUser.email)
 
         setUser({
