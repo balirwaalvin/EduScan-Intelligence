@@ -103,14 +103,16 @@ export default function UsersPage() {
     setSuccess('')
 
     try {
-      // Combine firstName and lastName into name field (required by Appwrite)
+      // Prepare user data with only Appwrite-compatible fields
       const userData = {
-        ...formData,
         name: `${formData.firstName} ${formData.lastName}`.trim(),
+        email: formData.email,
+        role: formData.role,
+        phoneNumber: formData.phone || '', // Map to phoneNumber (Appwrite schema)
         organizationId: user.id,
-        isActive: true, // Set user as active by default
-        createdAt: new Date().toISOString(), // Set creation timestamp
-        updatedAt: new Date().toISOString(), // Set update timestamp
+        isActive: true,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       }
 
       const response = await fetch('/api/users', {
@@ -148,12 +150,14 @@ export default function UsersPage() {
     setSuccess('')
 
     try {
-      // Combine firstName and lastName into name field (required by Appwrite)
+      // Prepare user data with only Appwrite-compatible fields
       const userData = {
         userId: selectedUser.$id,
-        ...formData,
         name: `${formData.firstName} ${formData.lastName}`.trim(),
-        updatedAt: new Date().toISOString(), // Update timestamp
+        email: formData.email,
+        role: formData.role,
+        phoneNumber: formData.phone || '', // Map to phoneNumber (Appwrite schema)
+        updatedAt: new Date().toISOString(),
       }
 
       const response = await fetch('/api/users', {
