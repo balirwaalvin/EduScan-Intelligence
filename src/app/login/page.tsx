@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Mail, Lock, Scan, ArrowLeft, AlertCircle } from 'lucide-react'
+import { Mail, Lock, ArrowLeft, AlertCircle } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
@@ -106,18 +106,17 @@ export default function LoginPage() {
               <ArrowLeft className="w-5 h-5" />
               <span>Back to Home</span>
             </Link>
-
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
+              className="flex items-center space-x-3 mb-8"
+              initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="flex items-center justify-center space-x-2 mb-6"
+              transition={{ duration: 0.5 }}
             >
-              <div className="bg-gradient-to-br from-primary-500 to-purple-600 p-3 rounded-xl shadow-lg shadow-primary-500/20">
-                <Scan className="w-8 h-8 text-white" />
-              </div>
-              <span className="text-3xl font-bold text-white tracking-tight">
-                EduScan
-              </span>
+              <img
+                src="/eduscan-logo.png"
+                alt="EduScan Logo"
+                className="h-12 w-auto"
+              />
             </motion.div>
 
             <motion.h1

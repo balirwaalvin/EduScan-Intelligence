@@ -7,7 +7,6 @@ import BackgroundGradient from '@/components/BackgroundGradient'
 import {
   QrCode,
   Radio,
-  Scan,
   Shield,
   BarChart3,
   Users,
@@ -20,7 +19,6 @@ import {
   Smartphone,
   Lock,
   TrendingUp,
-  Award,
   Menu,
   X,
 } from 'lucide-react'
@@ -1233,10 +1231,11 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <div>
               <div className="flex items-center space-x-2 mb-4">
-                <div className="bg-gradient-to-br from-primary-600 to-accent-600 p-2 rounded-lg">
-                  <Scan className="w-6 h-6 text-white" />
-                </div>
-                <span className="text-2xl font-bold">EduScan</span>
+                <img
+                  src="/eduscan-logo.png"
+                  alt="EduScan Logo"
+                  className="h-10 w-auto"
+                />
               </div>
               <p className="text-gray-400">
                 Revolutionary attendance tracking for the modern age.

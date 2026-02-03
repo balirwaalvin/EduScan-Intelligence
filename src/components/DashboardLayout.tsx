@@ -13,7 +13,6 @@ import {
   Menu,
   X,
   Bell,
-  Scan,
   Building2,
   BookOpen,
 } from 'lucide-react'
@@ -166,12 +165,11 @@ export default function DashboardLayout({ children, role, user }: DashboardLayou
 
             <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
               <div className="flex items-center flex-shrink-0 px-4 mb-8">
-                <div className="bg-gradient-to-br from-primary-600 to-accent-600 p-2 rounded-lg">
-                  <Scan className="w-6 h-6 text-white" />
-                </div>
-                <span className="ml-2 text-2xl font-bold bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
-                  EduScan
-                </span>
+                <img
+                  src="/eduscan-logo.png"
+                  alt="EduScan Logo"
+                  className="h-10 w-auto"
+                />
               </div>
 
               <nav className="mt-5 px-2 space-y-1">
