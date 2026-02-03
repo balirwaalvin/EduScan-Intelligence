@@ -96,11 +96,11 @@ export default function DashboardLayout({ children, role, user }: DashboardLayou
       {/* Sidebar for desktop */}
       <aside className="hidden md:fixed md:inset-y-0 md:flex md:w-64 md:flex-col">
         <div className="flex flex-col flex-grow bg-white border-r border-gray-200 pt-5 pb-4 overflow-y-auto">
-          <div className="flex items-center flex-shrink-0 px-4 mb-8">
+          <div className="flex items-center justify-center flex-shrink-0 px-4 mb-8">
             <img
               src="/eduscan-logo.png"
               alt="EduScan Logo"
-              className="h-10 w-auto"
+              className="h-16 w-auto"
             />
           </div>
 
