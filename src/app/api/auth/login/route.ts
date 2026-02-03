@@ -45,18 +45,24 @@ export async function POST(request: NextRequest) {
 
     try {
       // Create email password session (this is just for authentication, not stored in DB)
+      console.log('Creating session...')
       const session = await account.createEmailPasswordSession(email, password)
-      console.log('Session created successfully:', session.$id)
+      console.log('✅ Session created successfully:', session.$id)
+      console.log('Session secret exists:', !!session.secret)
 
       // Create a NEW client with the session secret for authenticated requests
+      console.log('Creating authenticated client...')
       const authenticatedClient = new Client()
         .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
         .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID!)
         .setSession(session.secret)
 
+      console.log('Creating authenticated account instance...')
       const authenticatedAccount = new Account(authenticatedClient)
+
+      console.log('Attempting to get user details...')
       const user = await authenticatedAccount.get()
-      console.log('User retrieved:', user.$id, user.email)
+      console.log('✅ User retrieved successfully:', user.$id, user.email)
 
       // Get additional user info from our Users collection using server API key
       let userRole = 'USER'
