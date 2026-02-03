@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import { Mail, Lock, ArrowLeft, AlertCircle } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { account } from '@/lib/appwrite'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -21,23 +22,18 @@ export default function LoginPage() {
     setError('')
 
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      })
+      // Login directly with Appwrite client SDK
+      await account.createEmailPasswordSession(formData.email, formData.password)
 
-      const data = await response.json()
+      // Get user details to verify login
+      const user = await account.get()
+      console.log('Login successful:', user.email)
 
-      if (!response.ok) {
-        throw new Error(data.error || 'Login failed')
-      }
-
-      // Appwrite handles sessions via cookies, no need to store token
-      // Just redirect to dashboard
+      // Redirect to dashboard
       router.push('/dashboard/admin')
     } catch (err: any) {
-      setError(err.message)
+      console.error('Login error:', err)
+      setError(err.message || 'Invalid email or password')
     } finally {
       setLoading(false)
     }

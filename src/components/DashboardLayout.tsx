@@ -3,6 +3,7 @@
 import { ReactNode, useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
+import { account } from '@/lib/appwrite'
 import {
   LayoutDashboard,
   Users,
@@ -21,10 +22,11 @@ interface DashboardLayoutProps {
   children: ReactNode
   role: 'ADMIN' | 'TEACHER' | 'CLASS_REP'
   user?: {
-    firstName: string
-    lastName: string
+    name?: string
+    firstName?: string
+    lastName?: string
     email: string
-    organization: {
+    organization?: {
       name: string
     }
   }
@@ -35,9 +37,17 @@ export default function DashboardLayout({ children, role, user }: DashboardLayou
   const router = useRouter()
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
-  const handleLogout = () => {
-    localStorage.removeItem('token')
-    router.push('/login')
+  const handleLogout = async () => {
+    try {
+      // Delete current session with Appwrite
+      await account.deleteSession('current')
+      console.log('Logged out successfully')
+    } catch (error) {
+      console.error('Logout error:', error)
+    } finally {
+      // Redirect to login page regardless
+      router.push('/login')
+    }
   }
 
   const getNavItems = () => {
@@ -125,12 +135,13 @@ export default function DashboardLayout({ children, role, user }: DashboardLayou
                 <div className="flex items-center min-w-0">
                   <div className="flex-shrink-0">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-600 to-accent-600 flex items-center justify-center text-white font-semibold">
-                      {user?.firstName?.[0]}{user?.lastName?.[0]}
+                      {user?.name ? user.name.charAt(0).toUpperCase() :
+                       user?.firstName ? `${user.firstName[0]}${user.lastName?.[0] || ''}` : 'U'}
                     </div>
                   </div>
                   <div className="ml-3 min-w-0">
                     <p className="text-sm font-medium text-gray-900 truncate">
-                      {user?.firstName} {user?.lastName}
+                      {user?.name || `${user?.firstName || ''} ${user?.lastName || ''}`.trim() || 'User'}
                     </p>
                     <p className="text-xs text-gray-500 truncate">{role.replace('_', ' ')}</p>
                   </div>

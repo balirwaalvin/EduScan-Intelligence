@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { authService } from '@/lib/services/auth.service'
+import { Client, Account } from 'node-appwrite'
+import { serverUsers } from '@/lib/appwrite-server'
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,48 +15,59 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Login with Appwrite
     console.log('Attempting login for:', email)
-    const loginResult = await authService.login({ email, password })
 
-    if (!loginResult.success) {
-      console.error('Login failed:', loginResult.error)
+    // Create a temporary client for authentication
+    const client = new Client()
+      .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
+      .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID!)
+
+    const account = new Account(client)
+
+    try {
+      // Create email password session
+      const session = await account.createEmailPasswordSession(email, password)
+      console.log('Session created successfully')
+
+      // Get user details using the session
+      const user = await account.get()
+      console.log('User retrieved:', user.$id, user.email)
+
+      // Create response with session cookie
+      const response = NextResponse.json(
+        {
+          success: true,
+          user: {
+            id: user.$id,
+            email: user.email,
+            name: user.name,
+            emailVerification: user.emailVerification,
+            status: user.status,
+          },
+          message: 'Login successful'
+        },
+        { status: 200 }
+      )
+
+      // Set the session as a cookie
+      response.cookies.set('session', session.$id, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 60 * 60 * 24 * 7, // 7 days
+        path: '/',
+      })
+
+      return response
+
+    } catch (authError: any) {
+      console.error('Authentication failed:', authError.message)
       return NextResponse.json(
-        { error: loginResult.error || 'Invalid email or password' },
+        { error: authError.message || 'Invalid email or password' },
         { status: 401 }
       )
     }
 
-    console.log('Login successful, getting user details...')
-    // Get user details
-    const userResult = await authService.getCurrentUser()
-
-    if (!userResult.success || !userResult.user) {
-      console.error('Failed to get user:', userResult.error)
-      return NextResponse.json(
-        { error: 'Failed to retrieve user information' },
-        { status: 500 }
-      )
-    }
-
-    const user = userResult.user
-    console.log('User retrieved:', user.$id, user.email)
-
-    // Return success response with user data
-    return NextResponse.json(
-      {
-        success: true,
-        user: {
-          id: user.$id,
-          email: user.email,
-          name: user.name,
-          emailVerification: user.emailVerification,
-          status: user.status,
-        },
-        message: 'Login successful'
-      },
-      { status: 200 }
-    )
   } catch (error: any) {
     console.error('Login error:', error)
     return NextResponse.json(

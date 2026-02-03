@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import DashboardLayout from '@/components/DashboardLayout'
+import { account } from '@/lib/appwrite'
 import {
   Users,
   Calendar,
@@ -35,44 +36,56 @@ export default function AdminDashboard() {
   })
 
   useEffect(() => {
-    const token = localStorage.getItem('token')
-    if (!token) {
-      router.push('/login')
-      return
+    const checkAuth = async () => {
+      try {
+        // Check if user is authenticated with Appwrite
+        const currentUser = await account.get()
+        console.log('Authenticated user:', currentUser.email)
+
+        setUser({
+          id: currentUser.$id,
+          name: currentUser.name,
+          email: currentUser.email,
+          emailVerification: currentUser.emailVerification,
+        })
+
+        // Mock data for demonstration
+        // In production, fetch from API
+        setStats({
+          totalUsers: 1250,
+          totalSessions: 456,
+          activeSessionsToday: 12,
+          averageAttendance: 87.5,
+          totalStudents: 1050,
+          totalTeachers: 180,
+          totalClassReps: 20,
+          attendanceToday: 892,
+        })
+      } catch (error) {
+        console.error('Authentication check failed:', error)
+        // Not authenticated, redirect to login
+        router.push('/login')
+      } finally {
+        setLoading(false)
+      }
     }
 
-    // Mock data for demonstration
-    // In production, fetch from API
-    setUser({
-      firstName: 'Admin',
-      lastName: 'User',
-      email: 'admin@organization.com',
-      role: 'ADMIN',
-      organization: {
-        name: 'Demo Organization',
-      },
-    })
-
-    setStats({
-      totalUsers: 1250,
-      totalSessions: 456,
-      activeSessionsToday: 12,
-      averageAttendance: 87.5,
-      totalStudents: 1100,
-      totalTeachers: 45,
-      totalClassReps: 5,
-      attendanceToday: 892,
-    })
-
-    setLoading(false)
+    checkAuth()
   }, [router])
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+          <p className="mt-4 text-gray-600">Loading dashboard...</p>
+        </div>
       </div>
     )
+  }
+
+  if (!user) {
+    return null
   }
 
   const weeklyData = [
