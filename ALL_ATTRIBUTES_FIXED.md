@@ -137,18 +137,18 @@ After updating API key permissions:
 
 ## 📊 **Field Mapping Reference**
 
-| Form Field | Appwrite Attribute | Auto-Generated? | Value |
-|-----------|-------------------|-----------------|-------|
-| First Name | firstName | No | From form |
-| Last Name | lastName | No | From form |
+| Form Field | Appwrite Attribute | Sent to Appwrite? | Notes |
+|-----------|-------------------|-------------------|-------|
+| First Name | - | ❌ No | Used to create `name` only |
+| Last Name | - | ❌ No | Used to create `name` only |
 | - | **name** | ✅ Yes | `${firstName} ${lastName}` |
-| Email | email | No | From form |
-| Role | role | No | From form (STUDENT, TEACHER, etc.) |
-| Phone | phone | No | From form (optional) |
-| - | **organizationId** | ✅ Yes | Current user's org ID |
-| - | **isActive** | ✅ Yes | `true` |
-| - | **createdAt** | ✅ Yes | `new Date().toISOString()` |
-| - | **updatedAt** | ✅ Yes | `new Date().toISOString()` |
+| Email | email | ✅ Yes | Direct mapping |
+| Role | role | ✅ Yes | Direct mapping |
+| Phone | phoneNumber | ✅ Yes | Mapped from `phone` to `phoneNumber` |
+| - | **organizationId** | ✅ Yes | Auto-set from current user |
+| - | **isActive** | ✅ Yes | Auto-set to `true` |
+| - | **createdAt** | ✅ Yes | Auto-set timestamp |
+| - | **updatedAt** | ✅ Yes | Auto-set timestamp |
 
 ---
 
