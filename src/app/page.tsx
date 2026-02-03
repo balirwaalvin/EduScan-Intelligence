@@ -181,7 +181,6 @@ export default function LandingPage() {
               >
                 Login
               </Link>
-              <ThemeToggle />
               <Link
                 href="/trial"
                 className="bg-gradient-to-r from-primary-600 to-accent-600 text-white px-6 py-2 rounded-full hover:shadow-lg transition transform hover:scale-105"
