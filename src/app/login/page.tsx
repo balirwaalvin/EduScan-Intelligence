@@ -5,7 +5,6 @@ import { motion } from 'framer-motion'
 import { Mail, Lock, ArrowLeft, AlertCircle } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { account } from '@/lib/appwrite'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -22,14 +21,27 @@ export default function LoginPage() {
     setError('')
 
     try {
-      // Login directly with Appwrite client SDK
-      await account.createEmailPasswordSession(formData.email, formData.password)
+      // Call login API route instead of using client SDK
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+        }),
+      })
 
-      // Get user details to verify login
-      const user = await account.get()
-      console.log('Login successful:', user.email)
+      const data = await response.json()
 
-      // Redirect to dashboard
+      if (!response.ok) {
+        throw new Error(data.error || 'Login failed')
+      }
+
+      console.log('Login successful:', data.user.email)
+
+      // Redirect to dashboard based on user role (default to admin for now)
       router.push('/dashboard/admin')
     } catch (err: any) {
       console.error('Login error:', err)
