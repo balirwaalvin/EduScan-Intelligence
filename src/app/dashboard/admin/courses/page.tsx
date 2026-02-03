@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import DashboardLayout from '@/components/DashboardLayout'
-import { account } from '@/lib/appwrite'
 import {
   BookOpen,
   Plus,
@@ -54,7 +53,12 @@ export default function CoursesPage() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const currentUser = await account.get()
+        const response = await fetch('/api/auth/me')
+        if (!response.ok) throw new Error('Not authenticated')
+
+        const data = await response.json()
+        const currentUser = data.user
+
         setUser({
           id: currentUser.$id,
           name: currentUser.name,

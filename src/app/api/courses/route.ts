@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
 
     const response = await serverDatabases.listDocuments(
       DATABASE_ID,
-      COLLECTIONS.ORGANIZATIONS,
+      COLLECTIONS.COURSES,
       queries
     );
 
@@ -37,11 +37,16 @@ export async function POST(request: NextRequest) {
 
     const course = await serverDatabases.createDocument(
       DATABASE_ID,
-      COLLECTIONS.ORGANIZATIONS,
+      COLLECTIONS.COURSES,
       'unique()',
       {
-        ...body,
+        name: body.name,
+        code: body.code,
+        description: body.description || '',
+        organizationId: body.organizationId,
+        departmentId: body.departmentId || '',
         createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       }
     );
 
@@ -61,11 +66,20 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'Course ID is required' }, { status: 400 });
     }
 
+    const updateData: any = {
+      updatedAt: new Date().toISOString(),
+    };
+
+    if (updates.name) updateData.name = updates.name;
+    if (updates.code) updateData.code = updates.code;
+    if (updates.description !== undefined) updateData.description = updates.description;
+    if (updates.departmentId !== undefined) updateData.departmentId = updates.departmentId;
+
     const course = await serverDatabases.updateDocument(
       DATABASE_ID,
-      COLLECTIONS.ORGANIZATIONS,
+      COLLECTIONS.COURSES,
       courseId,
-      updates
+      updateData
     );
 
     return NextResponse.json({ course });
@@ -86,12 +100,16 @@ export async function DELETE(request: NextRequest) {
 
     await serverDatabases.deleteDocument(
       DATABASE_ID,
-      COLLECTIONS.ORGANIZATIONS,
+      COLLECTIONS.COURSES,
       courseId
     );
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
+    console.error('Error deleting course:', error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
     console.error('Error deleting course:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
