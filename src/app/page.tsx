@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import LiquidCursor from '@/components/LiquidCursor'
 import BackgroundGradient from '@/components/BackgroundGradient'
-import ThemeToggle from '@/components/ThemeToggle'
 import {
   QrCode,
   Radio,
