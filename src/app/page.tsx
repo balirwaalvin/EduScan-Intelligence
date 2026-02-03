@@ -31,7 +31,7 @@ export default function LandingPage() {
 
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-dark-950 dark:via-dark-900 dark:to-dark-950">
+    <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       <LiquidCursor />
       <BackgroundGradient />
 

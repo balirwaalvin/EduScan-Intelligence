@@ -94,9 +94,11 @@ export default function DashboardLayout({ children, role, user }: DashboardLayou
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <AnimatedBubbles />
+
       {/* Sidebar for desktop */}
       <aside className="hidden md:fixed md:inset-y-0 md:flex md:w-64 md:flex-col">
-        <div className="flex flex-col flex-grow bg-white dark:bg-dark-900 border-r border-gray-200 dark:border-dark-800 pt-5 pb-4 overflow-y-auto">
+        <div className="flex flex-col flex-grow bg-white border-r border-gray-200 pt-5 pb-4 overflow-y-auto">
           <div className="flex items-center justify-center flex-shrink-0 px-4 mb-8">
             <img
               src="/eduscan-logo.png"
@@ -222,14 +224,13 @@ export default function DashboardLayout({ children, role, user }: DashboardLayou
 
           <div className="flex-1 px-4 flex justify-between items-center">
             <div className="flex-1">
-              <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+              <h1 className="text-xl font-semibold text-gray-900">
                 {user?.organization?.name || 'EduScan Dashboard'}
               </h1>
             </div>
 
-            <div className="ml-4 flex items-center md:ml-6 space-x-3">
-              <ThemeToggle />
-              <button className="p-2 rounded-full text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-dark-800 transition">
+            <div className="ml-4 flex items-center md:ml-6">
+              <button className="p-2 rounded-full text-gray-400 hover:text-gray-500 hover:bg-gray-100 transition">
                 <Bell className="h-6 w-6" />
               </button>
             </div>
