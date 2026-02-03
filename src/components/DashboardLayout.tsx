@@ -95,7 +95,7 @@ export default function DashboardLayout({ children, role, user }: DashboardLayou
     <div className="min-h-screen bg-gray-50">
       {/* Sidebar for desktop */}
       <aside className="hidden md:fixed md:inset-y-0 md:flex md:w-64 md:flex-col">
-        <div className="flex flex-col flex-grow bg-white border-r border-gray-200 pt-5 pb-4 overflow-y-auto">
+        <div className="flex flex-col flex-grow bg-white dark:bg-dark-900 border-r border-gray-200 dark:border-dark-800 pt-5 pb-4 overflow-y-auto">
           <div className="flex items-center justify-center flex-shrink-0 px-4 mb-8">
             <img
               src="/eduscan-logo.png"

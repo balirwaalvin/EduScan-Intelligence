@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import LiquidCursor from '@/components/LiquidCursor'
 import BackgroundGradient from '@/components/BackgroundGradient'
+import ThemeToggle from '@/components/ThemeToggle'
 import {
   QrCode,
   Radio,
@@ -30,7 +31,7 @@ export default function LandingPage() {
 
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-dark-950 dark:via-dark-900 dark:to-dark-950">
       <LiquidCursor />
       <BackgroundGradient />
 
