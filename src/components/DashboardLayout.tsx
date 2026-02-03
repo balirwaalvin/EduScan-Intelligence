@@ -4,7 +4,7 @@ import { ReactNode, useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { account } from '@/lib/appwrite'
-import ThemeToggle from '@/components/ThemeToggle'
+import AnimatedBubbles from '@/components/AnimatedBubbles'
 import {
   LayoutDashboard,
   Users,
