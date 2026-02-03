@@ -276,6 +276,7 @@ Now that user creation works, you can:
 
 1. **Code Updated:**
    - ✅ Added automatic `name` field generation
+   - ✅ Added automatic `isActive` field (set to true)
    - ✅ Applied to both create and edit functions
    - ✅ Committed and pushed to GitHub
 
