@@ -202,9 +202,15 @@ The code handles these errors gracefully:
 
 ## 🎊 **Summary**
 
-**Issue:** Could not login when already logged in
-**Solution:** Automatically delete old session before creating new one
-**Result:** Seamless login experience, no more session errors
+**Issues:** 
+1. Could not login when already logged in (session conflict)
+2. Failed to fetch errors from client-side SDK usage
+
+**Solutions:** 
+1. Automatically delete old session before creating new one (API route)
+2. Use API route instead of client-side Appwrite SDK (Login page)
+
+**Result:** Seamless login experience, no more errors of any kind!
 
 ---
 
