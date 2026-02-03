@@ -122,7 +122,7 @@ export const departmentService = {
     try {
       await serverDatabases.deleteDocument(
         DATABASE_ID,
-        COLLECTIONS.ORGANIZATIONS,
+        COLLECTIONS.DEPARTMENTS,
         departmentId
       );
 
