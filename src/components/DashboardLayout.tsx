@@ -97,12 +97,11 @@ export default function DashboardLayout({ children, role, user }: DashboardLayou
       <aside className="hidden md:fixed md:inset-y-0 md:flex md:w-64 md:flex-col">
         <div className="flex flex-col flex-grow bg-white border-r border-gray-200 pt-5 pb-4 overflow-y-auto">
           <div className="flex items-center flex-shrink-0 px-4 mb-8">
-            <div className="bg-gradient-to-br from-primary-600 to-accent-600 p-2 rounded-lg">
-              <Scan className="w-6 h-6 text-white" />
-            </div>
-            <span className="ml-2 text-2xl font-bold bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
-              EduScan
-            </span>
+            <img
+              src="/eduscan-logo.png"
+              alt="EduScan Logo"
+              className="h-10 w-auto"
+            />
           </div>
 
           <nav className="mt-5 flex-1 flex flex-col px-2 space-y-1">
