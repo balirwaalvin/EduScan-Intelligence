@@ -109,6 +109,7 @@ export default function UsersPage() {
         name: `${formData.firstName} ${formData.lastName}`.trim(),
         organizationId: user.id,
         isActive: true, // Set user as active by default
+        createdAt: new Date().toISOString(), // Set creation timestamp
       }
 
       const response = await fetch('/api/users', {
