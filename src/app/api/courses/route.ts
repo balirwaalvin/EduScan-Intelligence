@@ -110,7 +110,3 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
-    console.error('Error deleting course:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
-}
