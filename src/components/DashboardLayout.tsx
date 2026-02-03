@@ -174,11 +174,11 @@ export default function DashboardLayout({ children, role, user }: DashboardLayou
             </div>
 
             <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
-              <div className="flex items-center flex-shrink-0 px-4 mb-8">
+              <div className="flex items-center justify-center flex-shrink-0 px-4 mb-8">
                 <img
                   src="/eduscan-logo.png"
                   alt="EduScan Logo"
-                  className="h-10 w-auto"
+                  className="h-16 w-auto"
                 />
               </div>
 
