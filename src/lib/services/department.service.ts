@@ -20,7 +20,7 @@ export const departmentService = {
 
       const response = await serverDatabases.listDocuments(
         DATABASE_ID,
-        COLLECTIONS.ORGANIZATIONS,
+        COLLECTIONS.DEPARTMENTS,
         queries
       );
 
@@ -37,7 +37,7 @@ export const departmentService = {
     try {
       const department = await serverDatabases.getDocument(
         DATABASE_ID,
-        COLLECTIONS.ORGANIZATIONS,
+        COLLECTIONS.DEPARTMENTS,
         departmentId
       );
 
@@ -54,30 +54,15 @@ export const departmentService = {
     try {
       const department = await serverDatabases.createDocument(
         DATABASE_ID,
-        COLLECTIONS.ORGANIZATIONS,
+        COLLECTIONS.DEPARTMENTS,
         'unique()',
         {
           name: departmentData.name,
-          email: `${departmentData.code.toLowerCase()}@department.local`, // Generate email from code
-          adminId: departmentData.organizationId, // Use org ID as admin
-          plan: 'DEPARTMENT', // Mark as department type
-          subscriptionStatus: 'ACTIVE',
-          autoCheckout: false,
-          lateThresholdMinutes: 15,
-          timezone: 'UTC',
+          code: departmentData.code,
+          organizationId: departmentData.organizationId,
+          description: departmentData.description || '',
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
-          // Custom department fields (can be stored as metadata)
-          departmentCode: departmentData.code,
-        }
-      );
-
-      return { success: true, department };
-    } catch (error: any) {
-      return { success: false, error: error.message };
-    }
-  },
-          createdAt: new Date().toISOString(),
         }
       );
 
@@ -95,16 +80,14 @@ export const departmentService = {
       const updateData: any = {
         updatedAt: new Date().toISOString(),
       };
-
+      
       if (updates.name) updateData.name = updates.name;
-      if (updates.code) {
-        updateData.departmentCode = updates.code;
-        updateData.email = `${updates.code.toLowerCase()}@department.local`;
-      }
+      if (updates.code) updateData.code = updates.code;
+      if (updates.description !== undefined) updateData.description = updates.description;
 
       const department = await serverDatabases.updateDocument(
         DATABASE_ID,
-        COLLECTIONS.ORGANIZATIONS,
+        COLLECTIONS.DEPARTMENTS,
         departmentId,
         updateData
       );
