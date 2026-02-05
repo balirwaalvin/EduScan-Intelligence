@@ -86,10 +86,16 @@ export const organizationService = {
         updatedAt: new Date().toISOString(),
       };
 
-      // Only update fields that exist in Appwrite Organizations schema
+      // Core fields
       if (updates.name) updateData.name = updates.name;
       if (updates.email) updateData.email = updates.email;
-      // Note: address, phone, website not in current schema - need to add to Appwrite
+
+      // Contact fields (will work once added to Appwrite schema)
+      if (updates.address !== undefined) updateData.address = updates.address;
+      if (updates.phone !== undefined) updateData.phone = updates.phone;
+      if (updates.website !== undefined) updateData.website = updates.website;
+
+      // System fields
       if (updates.plan) updateData.plan = updates.plan;
       if (updates.subscriptionStatus) updateData.subscriptionStatus = updates.subscriptionStatus;
       if (updates.allowedMethods) updateData.allowedMethods = JSON.stringify(updates.allowedMethods);
