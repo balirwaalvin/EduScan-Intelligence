@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import DashboardLayout from '@/components/DashboardLayout'
-import { account } from '@/lib/appwrite'
 import {
   Building2,
   Plus,
@@ -52,14 +51,28 @@ export default function DepartmentsPage() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const currentUser = await account.get()
+        // Check if user is authenticated via our API
+        const response = await fetch('/api/auth/me')
+
+        if (!response.ok) {
+          throw new Error('Not authenticated')
+        }
+
+        const data = await response.json()
+        const currentUser = data.user
+
+        console.log('Authenticated user:', currentUser.email)
+
         setUser({
           id: currentUser.$id,
           name: currentUser.name,
           email: currentUser.email,
         })
+
+        // Fetch departments for this organization
         await fetchDepartments(currentUser.$id)
       } catch (error) {
+        console.error('Authentication check failed:', error)
         router.push('/login')
       } finally {
         setLoading(false)

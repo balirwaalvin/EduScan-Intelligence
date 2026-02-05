@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import DashboardLayout from '@/components/DashboardLayout'
-import { account } from '@/lib/appwrite'
 import {
   TrendingUp,
   Users,
@@ -83,14 +82,28 @@ export default function AnalyticsPage() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const currentUser = await account.get()
+        // Check if user is authenticated via our API
+        const response = await fetch('/api/auth/me')
+
+        if (!response.ok) {
+          throw new Error('Not authenticated')
+        }
+
+        const data = await response.json()
+        const currentUser = data.user
+
+        console.log('Authenticated user:', currentUser.email)
+
         setUser({
           id: currentUser.$id,
           name: currentUser.name,
           email: currentUser.email,
         })
+
+        // Fetch analytics for this organization
         await fetchAnalytics(currentUser.$id)
       } catch (error) {
+        console.error('Authentication check failed:', error)
         router.push('/login')
       } finally {
         setLoading(false)
@@ -235,7 +248,7 @@ export default function AnalyticsPage() {
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                  label={({ name, percent }) => `${name}: ${((percent || 0) * 100).toFixed(0)}%`}
                   outerRadius={100}
                   fill="#8884d8"
                   dataKey="count"
