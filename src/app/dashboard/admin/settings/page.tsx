@@ -92,10 +92,39 @@ export default function SettingsPage() {
         phone: currentUser.phoneNumber || '', // Load phone number
       }))
 
+      // Load organization data
+      await loadOrganizationData(currentUser.$id)
+
       console.log('User state updated - sidebar should refresh')
     } catch (error) {
       console.error('Error loading user data:', error)
       throw error
+    }
+  }
+
+  // Function to load organization data
+  const loadOrganizationData = async (organizationId: string) => {
+    try {
+      const response = await fetch(`/api/organization?organizationId=${organizationId}`)
+
+      if (response.ok) {
+        const data = await response.json()
+        if (data.organization) {
+          const org = data.organization
+          setOrganizationData({
+            name: org.name || '',
+            address: org.address || '',
+            phone: org.phone || '',
+            email: org.email || '',
+            website: org.website || '',
+          })
+          console.log('Organization data loaded:', org)
+        }
+      } else {
+        console.log('No organization found or error loading - using defaults')
+      }
+    } catch (error) {
+      console.error('Error loading organization data:', error)
     }
   }
 
@@ -174,7 +203,10 @@ export default function SettingsPage() {
       const response = await fetch('/api/organization', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(organizationData),
+        body: JSON.stringify({
+          organizationId: user.id, // Use user ID as organization ID
+          ...organizationData,
+        }),
       })
 
       if (!response.ok) {
@@ -472,6 +504,21 @@ export default function SettingsPage() {
               <form onSubmit={handleSaveOrganization} className="space-y-6">
                 <div>
                   <h2 className="text-xl font-bold text-gray-900 mb-4">Organization Details</h2>
+
+                  {/* Warning Notice */}
+                  <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                    <div className="flex items-start space-x-3">
+                      <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+                      <div>
+                        <p className="text-sm font-semibold text-yellow-800">Note</p>
+                        <p className="text-xs text-yellow-700 mt-1">
+                          Currently only Organization Name and Email can be saved.
+                          Additional fields (address, phone, website) require Appwrite schema updates.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="md:col-span-2">
                       <label className="block text-sm font-medium text-gray-700 mb-2">
