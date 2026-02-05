@@ -63,30 +63,46 @@ export default function SettingsPage() {
     lateThreshold: 15,
   })
 
+  // Function to fetch and load user data
+  const loadUserData = async () => {
+    try {
+      const response = await fetch('/api/auth/me')
+
+      if (!response.ok) {
+        throw new Error('Not authenticated')
+      }
+
+      const data = await response.json()
+      const currentUser = data.user
+
+      console.log('Loaded user data:', currentUser)
+
+      // Update user state (this will update sidebar)
+      setUser({
+        id: currentUser.$id,
+        name: currentUser.name,
+        email: currentUser.email,
+      })
+
+      // Set profile data with all fields including phone
+      setProfileData((prev) => ({
+        ...prev,
+        name: currentUser.name || '',
+        email: currentUser.email || '',
+        phone: currentUser.phoneNumber || '', // Load phone number
+      }))
+
+      console.log('User state updated - sidebar should refresh')
+    } catch (error) {
+      console.error('Error loading user data:', error)
+      throw error
+    }
+  }
+
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await fetch('/api/auth/me')
-
-        if (!response.ok) {
-          throw new Error('Not authenticated')
-        }
-
-        const data = await response.json()
-        const currentUser = data.user
-
-        setUser({
-          id: currentUser.$id,
-          name: currentUser.name,
-          email: currentUser.email,
-        })
-
-        // Set initial profile data
-        setProfileData((prev) => ({
-          ...prev,
-          name: currentUser.name || '',
-          email: currentUser.email || '',
-        }))
+        await loadUserData()
       } catch (error) {
         console.error('Authentication check failed:', error)
         router.push('/login')
@@ -130,6 +146,9 @@ export default function SettingsPage() {
       }
 
       setSuccess('Profile updated successfully!')
+
+      // Reload user data to refresh sidebar and form fields
+      await loadUserData()
 
       // Clear password fields
       setProfileData((prev) => ({
