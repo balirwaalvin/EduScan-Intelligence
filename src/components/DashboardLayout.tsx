@@ -3,7 +3,6 @@
 import { ReactNode, useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import AnimatedBubbles from '@/components/AnimatedBubbles'
 import {
   LayoutDashboard,
   Users,
@@ -16,6 +15,8 @@ import {
   Bell,
   Building2,
   BookOpen,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react'
 
 interface DashboardLayoutProps {
@@ -36,6 +37,7 @@ export default function DashboardLayout({ children, role, user }: DashboardLayou
   const pathname = usePathname()
   const router = useRouter()
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
 
   const handleLogout = async () => {
     try {
@@ -93,17 +95,33 @@ export default function DashboardLayout({ children, role, user }: DashboardLayou
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <AnimatedBubbles />
-
       {/* Sidebar for desktop */}
-      <aside className="hidden md:fixed md:inset-y-0 md:flex md:w-64 md:flex-col">
+      <aside className={`hidden md:fixed md:inset-y-0 md:flex md:flex-col transition-all duration-300 ${
+        sidebarCollapsed ? 'md:w-20' : 'md:w-64'
+      }`}>
         <div className="flex flex-col flex-grow bg-white border-r border-gray-200 pt-5 pb-4 overflow-y-auto">
-          <div className="flex items-center justify-center flex-shrink-0 px-4 mb-8">
+          {/* Logo section - always visible */}
+          <div className="flex items-center justify-center flex-shrink-0 px-4 mb-8 relative">
             <img
               src="/eduscan-logo.png"
               alt="EduScan Logo"
-              className="h-16 w-auto"
+              className={`transition-all duration-300 ${
+                sidebarCollapsed ? 'h-10 w-10' : 'h-16 w-auto'
+              }`}
             />
+
+            {/* Collapse/Expand button */}
+            <button
+              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+              className="absolute -right-3 top-1/2 -translate-y-1/2 bg-white border-2 border-gray-200 rounded-full p-1 hover:bg-gray-50 transition-colors shadow-sm"
+              title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            >
+              {sidebarCollapsed ? (
+                <ChevronRight className="w-4 h-4 text-gray-600" />
+              ) : (
+                <ChevronLeft className="w-4 h-4 text-gray-600" />
+              )}
+            </button>
           </div>
 
           <nav className="mt-5 flex-1 flex flex-col px-2 space-y-1">
@@ -117,14 +135,15 @@ export default function DashboardLayout({ children, role, user }: DashboardLayou
                     isActive
                       ? 'bg-gradient-to-r from-primary-600 to-accent-600 text-white'
                       : 'text-gray-700 hover:bg-gray-100'
-                  }`}
+                  } ${sidebarCollapsed ? 'justify-center' : ''}`}
+                  title={sidebarCollapsed ? item.name : ''}
                 >
                   <item.icon
-                    className={`mr-3 flex-shrink-0 h-5 w-5 ${
+                    className={`flex-shrink-0 h-5 w-5 ${
                       isActive ? 'text-white' : 'text-gray-400 group-hover:text-gray-500'
-                    }`}
+                    } ${sidebarCollapsed ? '' : 'mr-3'}`}
                   />
-                  {item.name}
+                  {!sidebarCollapsed && item.name}
                 </Link>
               )
             })}
@@ -132,28 +151,32 @@ export default function DashboardLayout({ children, role, user }: DashboardLayou
 
           <div className="flex-shrink-0 flex border-t border-gray-200 p-4">
             <div className="flex-shrink-0 w-full group block">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center min-w-0">
+              <div className={`flex items-center ${sidebarCollapsed ? 'justify-center' : 'justify-between'}`}>
+                <div className={`flex items-center min-w-0 ${sidebarCollapsed ? 'justify-center' : ''}`}>
                   <div className="flex-shrink-0">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-600 to-accent-600 flex items-center justify-center text-white font-semibold">
                       {user?.name ? user.name.charAt(0).toUpperCase() :
                        user?.firstName ? `${user.firstName[0]}${user.lastName?.[0] || ''}` : 'U'}
                     </div>
                   </div>
-                  <div className="ml-3 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 truncate">
-                      {user?.name || `${user?.firstName || ''} ${user?.lastName || ''}`.trim() || 'User'}
-                    </p>
-                    <p className="text-xs text-gray-500 truncate">{role.replace('_', ' ')}</p>
-                  </div>
+                  {!sidebarCollapsed && (
+                    <div className="ml-3 min-w-0">
+                      <p className="text-sm font-medium text-gray-900 truncate">
+                        {user?.name || `${user?.firstName || ''} ${user?.lastName || ''}`.trim() || 'User'}
+                      </p>
+                      <p className="text-xs text-gray-500 truncate">{role.replace('_', ' ')}</p>
+                    </div>
+                  )}
                 </div>
-                <button
-                  onClick={handleLogout}
-                  className="ml-2 p-2 text-gray-400 hover:text-red-600 transition"
-                  title="Logout"
-                >
-                  <LogOut className="w-5 h-5" />
-                </button>
+                {!sidebarCollapsed && (
+                  <button
+                    onClick={handleLogout}
+                    className="ml-2 p-2 text-gray-400 hover:text-red-600 transition"
+                    title="Logout"
+                  >
+                    <LogOut className="w-5 h-5" />
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -210,7 +233,9 @@ export default function DashboardLayout({ children, role, user }: DashboardLayou
       )}
 
       {/* Main content */}
-      <div className="md:pl-64 flex flex-col flex-1">
+      <div className={`flex flex-col flex-1 transition-all duration-300 ${
+        sidebarCollapsed ? 'md:pl-20' : 'md:pl-64'
+      }`}>
         {/* Top bar */}
         <div className="sticky top-0 z-10 flex-shrink-0 flex h-16 bg-white shadow-sm">
           <button
