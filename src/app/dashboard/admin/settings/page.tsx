@@ -105,29 +105,22 @@ export default function SettingsPage() {
     setSuccess('')
 
     try {
-      // Validate password change if attempting
+      // Note: Password changes are currently not supported via this interface
+      // They need to be handled via Appwrite's Account API with proper authentication
       if (profileData.newPassword) {
-        if (profileData.newPassword !== profileData.confirmPassword) {
-          throw new Error('New passwords do not match')
-        }
-        if (profileData.newPassword.length < 8) {
-          throw new Error('Password must be at least 8 characters')
-        }
-        if (!profileData.currentPassword) {
-          throw new Error('Current password is required to change password')
-        }
+        setError('Password changes are not yet implemented. Please update your name and phone only for now.')
+        setSaving(false)
+        return
       }
 
-      // Update profile
+      // Update profile (name and phone only)
       const response = await fetch('/api/users', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           userId: user.id,
           name: profileData.name,
-          phoneNumber: profileData.phone, // Changed from 'phone' to 'phoneNumber'
-          currentPassword: profileData.currentPassword,
-          newPassword: profileData.newPassword,
+          phoneNumber: profileData.phone,
         }),
       })
 
@@ -137,6 +130,7 @@ export default function SettingsPage() {
       }
 
       setSuccess('Profile updated successfully!')
+
       // Clear password fields
       setProfileData((prev) => ({
         ...prev,
@@ -366,7 +360,22 @@ export default function SettingsPage() {
 
                 <div className="border-t pt-6">
                   <h2 className="text-xl font-bold text-gray-900 mb-4">Change Password</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                  {/* Warning Notice */}
+                  <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                    <div className="flex items-start space-x-3">
+                      <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+                      <div>
+                        <p className="text-sm font-semibold text-yellow-800">Password Changes Not Yet Available</p>
+                        <p className="text-xs text-yellow-700 mt-1">
+                          Password change functionality will be implemented in a future update.
+                          For now, you can update your name and phone number only.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 opacity-50 pointer-events-none">
                     <div className="md:col-span-2">
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Current Password

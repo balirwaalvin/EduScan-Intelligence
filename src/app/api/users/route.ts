@@ -53,16 +53,37 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json();
-    const { userId, ...updates } = body;
+    const { userId, currentPassword, newPassword, ...updates } = body;
 
     if (!userId) {
       return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
     }
 
-    const result = await userService.updateUser(userId, updates);
+    // Filter out password fields from database updates
+    // Passwords are handled via Appwrite authentication API, not database
+    console.log('Updating user:', userId);
+    console.log('Updates (excluding passwords):', updates);
+
+    // Add updatedAt timestamp
+    const dbUpdates = {
+      ...updates,
+      updatedAt: new Date().toISOString(),
+    };
+
+    // Update user document in database (without password fields)
+    const result = await userService.updateUser(userId, dbUpdates);
 
     if (!result.success) {
       return NextResponse.json({ error: result.error }, { status: 400 });
+    }
+
+    // TODO: Handle password change via Appwrite Account API if needed
+    // This would require the user to be authenticated and use account.updatePassword()
+    // For now, we skip password updates as they need special handling
+
+    if (newPassword) {
+      console.log('Note: Password update requested but not implemented yet');
+      console.log('Password changes should be handled via Appwrite Account API');
     }
 
     return NextResponse.json({ user: result.user });
