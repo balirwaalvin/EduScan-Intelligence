@@ -120,11 +120,29 @@ export default function SettingsPage() {
           })
           console.log('Organization data loaded:', org)
         }
+      } else if (response.status === 404 || response.status === 500) {
+        // Organization doesn't exist - will be created on first save
+        console.log('Organization not found - will be created on first save')
+        setOrganizationData({
+          name: '',
+          address: '',
+          phone: '',
+          email: '',
+          website: '',
+        })
       } else {
         console.log('No organization found or error loading - using defaults')
       }
     } catch (error) {
       console.error('Error loading organization data:', error)
+      // Use empty defaults if organization doesn't exist yet
+      setOrganizationData({
+        name: '',
+        address: '',
+        phone: '',
+        email: '',
+        website: '',
+      })
     }
   }
 
@@ -200,22 +218,56 @@ export default function SettingsPage() {
     setSuccess('')
 
     try {
-      const response = await fetch('/api/organization', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          organizationId: user.id, // Use user ID as organization ID
-          ...organizationData,
-        }),
-      })
+      // First, try to check if organization exists
+      const checkResponse = await fetch(`/api/organization?organizationId=${user.id}`)
+      const organizationExists = checkResponse.ok
+
+      let response
+
+      if (organizationExists) {
+        // Organization exists - update it
+        console.log('Updating existing organization:', user.id)
+        response = await fetch('/api/organization', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            organizationId: user.id,
+            ...organizationData,
+          }),
+        })
+      } else {
+        // Organization doesn't exist - create it
+        console.log('Creating new organization with ID:', user.id)
+        response = await fetch('/api/organization', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            organizationId: user.id, // Use user ID as organization ID
+            name: organizationData.name || 'My Organization',
+            email: organizationData.email || user.email,
+            adminId: user.id,
+            plan: 'FREE',
+            address: organizationData.address || '',
+            phone: organizationData.phone || '',
+            website: organizationData.website || '',
+          }),
+        })
+      }
 
       if (!response.ok) {
         const data = await response.json()
-        throw new Error(data.error || 'Failed to update organization')
+        throw new Error(data.error || 'Failed to save organization')
       }
 
+      const result = await response.json()
+      console.log('Organization saved successfully:', result)
+
       setSuccess('Organization settings updated successfully!')
+
+      // Reload organization data
+      await loadOrganizationData(user.id)
     } catch (err: any) {
+      console.error('Error saving organization:', err)
       setError(err.message)
     } finally {
       setSaving(false)

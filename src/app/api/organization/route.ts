@@ -35,13 +35,19 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    console.log('Creating organization:', body);
+    console.log('Creating organization with data:', body);
 
-    const result = await organizationService.createOrganization(body);
+    // Pass the organizationId from the request (if provided)
+    const result = await organizationService.createOrganization({
+      organizationId: body.organizationId || body.adminId, // Use provided ID or adminId
+      ...body,
+    });
 
     if (!result.success) {
       return NextResponse.json({ error: result.error }, { status: 400 });
     }
+
+    console.log('Organization created successfully:', result.organization.$id);
 
     return NextResponse.json({ organization: result.organization }, { status: 201 });
   } catch (error: any) {

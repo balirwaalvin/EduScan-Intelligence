@@ -48,8 +48,10 @@ export const organizationService = {
    */
   async createOrganization(organizationData: any) {
     try {
-      // Generate a unique organization ID
-      const organizationId = ID.unique();
+      // Use provided organizationId (adminId) or generate a unique one
+      const organizationId = organizationData.organizationId || organizationData.adminId || ID.unique();
+
+      console.log('Creating organization with ID:', organizationId);
 
       const organization = await serverDatabases.createDocument(
         DATABASE_ID,
@@ -65,6 +67,9 @@ export const organizationService = {
           autoCheckout: organizationData.autoCheckout || false,
           lateThresholdMinutes: organizationData.lateThresholdMinutes || 15,
           timezone: organizationData.timezone || 'UTC',
+          address: organizationData.address || '',
+          phone: organizationData.phone || '',
+          website: organizationData.website || '',
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         }
