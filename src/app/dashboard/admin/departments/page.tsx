@@ -45,14 +45,25 @@ export default function DepartmentsPage() {
         const data = await response.json()
         console.log('Departments fetched:', data.departments)
         console.log('Number of departments:', data.departments?.length)
-        setDepartments(data.departments)
-        setFilteredDepartments(data.departments)
+        setDepartments(data.departments || [])
+        setFilteredDepartments(data.departments || [])
+
+        // Show helpful message if no departments found
+        if (!data.departments || data.departments.length === 0) {
+          console.warn('No departments found for this organization')
+          console.warn('This might mean:')
+          console.warn('1. No departments created yet')
+          console.warn('2. Departments exist but with different organizationId')
+          console.warn('3. Check Appwrite Console to verify department organizationId matches:', organizationId)
+        }
       } else {
         const errorData = await response.json()
         console.error('Failed to fetch departments:', errorData)
+        setError('Failed to load departments. Please try again.')
       }
     } catch (error) {
       console.error('Error fetching departments:', error)
+      setError('Error connecting to server. Please check your connection.')
     }
   }
 
@@ -334,11 +345,36 @@ export default function DepartmentsPage() {
           ))}
         </div>
 
-        {filteredDepartments.length === 0 && (
+        {filteredDepartments.length === 0 && !loading && (
           <div className="bg-white rounded-xl shadow-sm p-12 text-center">
             <Building2 className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-500 text-lg">No departments found</p>
-            <p className="text-gray-400 mt-2">Create your first department to get started</p>
+            <p className="text-gray-500 text-lg font-semibold">No departments found</p>
+            <p className="text-gray-400 mt-2">
+              {searchQuery
+                ? 'No departments match your search criteria'
+                : 'Create your first department to get started'
+              }
+            </p>
+
+            {!searchQuery && (
+              <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg text-left max-w-lg mx-auto">
+                <p className="text-sm text-blue-800 font-semibold mb-2">💡 Troubleshooting Tips:</p>
+                <ul className="text-xs text-blue-700 space-y-1 list-disc list-inside">
+                  <li>Check browser console (F12) for detailed logs</li>
+                  <li>Verify department exists in Appwrite Console</li>
+                  <li>Ensure department's organizationId matches your user ID</li>
+                  <li>Try creating a new department using the button above</li>
+                </ul>
+              </div>
+            )}
+
+            <button
+              onClick={() => setShowCreateModal(true)}
+              className="mt-6 inline-flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-primary-600 to-accent-600 text-white rounded-lg font-medium hover:shadow-lg transition"
+            >
+              <Plus className="w-5 h-5" />
+              <span>Create Department</span>
+            </button>
           </div>
         )}
 
