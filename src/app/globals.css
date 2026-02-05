@@ -119,6 +119,20 @@
   to { transform: rotate(360deg); }
 }
 
+@keyframes gradient-x {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes swing {
+  0%, 100% { transform: rotate(0deg); }
+  10%, 30% { transform: rotate(15deg); }
+  20%, 40% { transform: rotate(-10deg); }
+  50% { transform: rotate(5deg); }
+  60% { transform: rotate(-5deg); }
+  70% { transform: rotate(0deg); }
+}
+
 body {
   background-color: white;
   color: rgb(17 24 39);
@@ -154,6 +168,14 @@ body {
 
 .animate-rotate-slow {
   animation: rotate-slow 20s infinite linear;
+}
+
+.animate-gradient-x {
+  animation: gradient-x 3s ease infinite;
+}
+
+.animate-swing {
+  animation: swing 1s ease-in-out;
 }
 
 .animation-delay-2000 {

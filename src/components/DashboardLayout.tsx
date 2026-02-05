@@ -247,16 +247,38 @@ export default function DashboardLayout({ children, role, user }: DashboardLayou
           </button>
 
           <div className="flex-1 px-4 flex justify-between items-center">
-            <div className="flex-1">
-              <h1 className="text-xl font-semibold text-gray-900">
-                {user?.organization?.name || 'EduScan Dashboard'}
-              </h1>
+            {/* Animated Dashboard Title */}
+            <div className="flex-1 group">
+              <div className="relative inline-block">
+                <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-primary-600 via-accent-600 to-primary-600 bg-clip-text text-transparent animate-gradient-x bg-[length:200%_auto] transition-all duration-300 hover:scale-105 cursor-default">
+                  {user?.organization?.name || 'EduScan Dashboard'}
+                </h1>
+                {/* Animated underline */}
+                <div className="absolute -bottom-1 left-0 h-0.5 w-0 bg-gradient-to-r from-primary-600 to-accent-600 transition-all duration-500 group-hover:w-full"></div>
+                {/* Sparkle effect */}
+                <div className="absolute -top-1 -right-1 w-2 h-2 bg-accent-500 rounded-full opacity-0 group-hover:opacity-100 group-hover:animate-ping"></div>
+              </div>
             </div>
 
-            <div className="ml-4 flex items-center md:ml-6">
-              <button className="p-2 rounded-full text-gray-400 hover:text-gray-500 hover:bg-gray-100 transition">
-                <Bell className="h-6 w-6" />
-              </button>
+            {/* Animated Notification Bell */}
+            <div className="ml-4 flex items-center md:ml-6 space-x-3">
+              <div className="relative group">
+                <button className="relative p-2.5 rounded-full text-gray-400 hover:text-primary-600 hover:bg-gradient-to-br hover:from-primary-50 hover:to-accent-50 transition-all duration-300 transform hover:scale-110 hover:rotate-12 active:scale-95">
+                  <Bell className="h-6 w-6 transition-transform duration-300 group-hover:animate-swing" />
+                  {/* Notification badge */}
+                  <span className="absolute top-1 right-1 flex h-3 w-3">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-accent-500"></span>
+                  </span>
+                  {/* Glow effect on hover */}
+                  <span className="absolute inset-0 rounded-full bg-gradient-to-r from-primary-400 to-accent-400 opacity-0 group-hover:opacity-20 blur-md transition-opacity duration-300"></span>
+                </button>
+                {/* Tooltip */}
+                <div className="absolute top-full right-0 mt-2 px-3 py-1.5 bg-gray-900 text-white text-xs rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap shadow-lg">
+                  3 new notifications
+                  <div className="absolute -top-1 right-4 w-2 h-2 bg-gray-900 transform rotate-45"></div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
