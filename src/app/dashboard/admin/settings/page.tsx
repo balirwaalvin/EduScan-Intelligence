@@ -125,7 +125,7 @@ export default function SettingsPage() {
         body: JSON.stringify({
           userId: user.id,
           name: profileData.name,
-          phone: profileData.phone,
+          phoneNumber: profileData.phone, // Changed from 'phone' to 'phoneNumber'
           currentPassword: profileData.currentPassword,
           newPassword: profileData.newPassword,
         }),
