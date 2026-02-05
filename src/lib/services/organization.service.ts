@@ -62,11 +62,7 @@ export const organizationService = {
           email: organizationData.email || '',
           adminId: organizationData.adminId,
           plan: organizationData.plan || 'FREE',
-          subscriptionStatus: organizationData.subscriptionStatus || 'ACTIVE',
-          allowedMethods: JSON.stringify(organizationData.allowedMethods || ['QR_CODE', 'NFC', 'BLUETOOTH']),
-          autoCheckout: organizationData.autoCheckout || false,
-          lateThresholdMinutes: organizationData.lateThresholdMinutes || 15,
-          timezone: organizationData.timezone || 'UTC',
+          // Only include fields that exist in current Appwrite schema
           address: organizationData.address || '',
           phone: organizationData.phone || '',
           website: organizationData.website || '',
@@ -91,23 +87,16 @@ export const organizationService = {
         updatedAt: new Date().toISOString(),
       };
 
-      // Core fields
+      // Only update fields that currently exist in Appwrite Organizations schema
       if (updates.name) updateData.name = updates.name;
       if (updates.email) updateData.email = updates.email;
+      if (updates.plan) updateData.plan = updates.plan;
 
-      // Contact fields (will work once added to Appwrite schema)
+      // Contact fields (added to schema)
       if (updates.address !== undefined) updateData.address = updates.address;
       if (updates.phone !== undefined) updateData.phone = updates.phone;
       if (updates.website !== undefined) updateData.website = updates.website;
 
-      // System fields
-      if (updates.plan) updateData.plan = updates.plan;
-      if (updates.subscriptionStatus) updateData.subscriptionStatus = updates.subscriptionStatus;
-      if (updates.allowedMethods) updateData.allowedMethods = JSON.stringify(updates.allowedMethods);
-      if (updates.autoCheckout !== undefined) updateData.autoCheckout = updates.autoCheckout;
-      if (updates.lateThresholdMinutes) updateData.lateThresholdMinutes = updates.lateThresholdMinutes;
-      if (updates.timezone) updateData.timezone = updates.timezone;
-      if (updates.trialEndsAt) updateData.trialEndsAt = updates.trialEndsAt;
 
       console.log('Updating organization with data:', updateData);
 
