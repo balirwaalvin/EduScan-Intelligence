@@ -34,6 +34,40 @@ export default function DepartmentsPage() {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [fixing, setFixing] = useState(false)
+
+  const handleFixOrganizationIds = async () => {
+    if (!confirm('This will update all departments to use your organization ID. Continue?')) return
+
+    setFixing(true)
+    setError('')
+    setSuccess('')
+
+    try {
+      console.log('Fixing department organization IDs for:', user.id)
+      const response = await fetch('/api/departments/fix-org-ids', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ targetOrganizationId: user.id }),
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        console.log('Fix result:', data)
+        setSuccess(`Successfully updated ${data.updated} department(s)!`)
+        // Refresh departments list
+        await fetchDepartments(user.id)
+      } else {
+        const data = await response.json()
+        setError(data.error || 'Failed to fix organization IDs')
+      }
+    } catch (error: any) {
+      console.error('Error fixing organization IDs:', error)
+      setError(error.message)
+    } finally {
+      setFixing(false)
+    }
+  }
 
   const fetchDepartments = async (organizationId: string) => {
     try {
@@ -357,15 +391,34 @@ export default function DepartmentsPage() {
             </p>
 
             {!searchQuery && (
-              <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg text-left max-w-lg mx-auto">
-                <p className="text-sm text-blue-800 font-semibold mb-2">💡 Troubleshooting Tips:</p>
-                <ul className="text-xs text-blue-700 space-y-1 list-disc list-inside">
-                  <li>Check browser console (F12) for detailed logs</li>
-                  <li>Verify department exists in Appwrite Console</li>
-                  <li>Ensure department's organizationId matches your user ID</li>
-                  <li>Try creating a new department using the button above</li>
-                </ul>
-              </div>
+              <>
+                <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg text-left max-w-lg mx-auto">
+                  <p className="text-sm text-blue-800 font-semibold mb-2">💡 Troubleshooting Tips:</p>
+                  <ul className="text-xs text-blue-700 space-y-1 list-disc list-inside">
+                    <li>Check browser console (F12) for detailed logs</li>
+                    <li>Verify department exists in Appwrite Console</li>
+                    <li>Ensure department's organizationId matches your user ID</li>
+                    <li>Try creating a new department using the button above</li>
+                  </ul>
+                </div>
+
+                {/* Show fix button if console shows departments exist */}
+                <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg max-w-lg mx-auto">
+                  <p className="text-sm text-yellow-800 font-semibold mb-2">
+                    🔧 Department exists but not showing?
+                  </p>
+                  <p className="text-xs text-yellow-700 mb-3">
+                    If the console shows departments exist with a different organization ID, click below to fix it:
+                  </p>
+                  <button
+                    onClick={handleFixOrganizationIds}
+                    disabled={fixing}
+                    className="w-full px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg font-medium transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {fixing ? 'Fixing...' : '🔧 Fix Organization IDs'}
+                  </button>
+                </div>
+              </>
             )}
 
             <button
