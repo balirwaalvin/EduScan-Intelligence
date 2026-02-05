@@ -14,18 +14,29 @@ export const departmentService = {
     try {
       const queries = [];
       if (organizationId) {
+        console.log('Department service - Filtering by organizationId:', organizationId);
         queries.push(Query.equal('organizationId', organizationId));
+      } else {
+        console.log('Department service - No organizationId filter, fetching all');
       }
       queries.push(Query.orderDesc('$createdAt'));
 
+      console.log('Department service - Querying database...');
       const response = await serverDatabases.listDocuments(
         DATABASE_ID,
         COLLECTIONS.DEPARTMENTS,
         queries
       );
 
+      console.log('Department service - Response:', {
+        total: response.total,
+        documentsCount: response.documents.length,
+        documents: response.documents
+      });
+
       return { success: true, departments: response.documents };
     } catch (error: any) {
+      console.error('Department service - Error:', error);
       return { success: false, error: error.message };
     }
   },

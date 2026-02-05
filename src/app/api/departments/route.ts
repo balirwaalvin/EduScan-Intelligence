@@ -6,9 +6,14 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const organizationId = searchParams.get('organizationId');
 
+    console.log('Departments API - organizationId:', organizationId);
+
     const result = await departmentService.getAllDepartments(
       organizationId || undefined
     );
+
+    console.log('Departments service result:', result);
+    console.log('Number of departments found:', result.departments?.length);
 
     if (!result.success) {
       return NextResponse.json({ error: result.error }, { status: 500 });

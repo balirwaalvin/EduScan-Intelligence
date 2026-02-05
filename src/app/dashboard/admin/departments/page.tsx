@@ -37,11 +37,19 @@ export default function DepartmentsPage() {
 
   const fetchDepartments = async (organizationId: string) => {
     try {
+      console.log('Fetching departments for organizationId:', organizationId)
       const response = await fetch(`/api/departments?organizationId=${organizationId}`)
+      console.log('Departments API response status:', response.status)
+
       if (response.ok) {
         const data = await response.json()
+        console.log('Departments fetched:', data.departments)
+        console.log('Number of departments:', data.departments?.length)
         setDepartments(data.departments)
         setFilteredDepartments(data.departments)
+      } else {
+        const errorData = await response.json()
+        console.error('Failed to fetch departments:', errorData)
       }
     } catch (error) {
       console.error('Error fetching departments:', error)
@@ -71,6 +79,26 @@ export default function DepartmentsPage() {
 
         // Fetch departments for this organization
         await fetchDepartments(currentUser.$id)
+
+        // DEBUG: Also try fetching without organization filter
+        console.log('DEBUG: Attempting to fetch ALL departments...')
+        try {
+          const allDepsResponse = await fetch('/api/departments')
+          if (allDepsResponse.ok) {
+            const allDepsData = await allDepsResponse.json()
+            console.log('DEBUG: All departments in database:', allDepsData.departments)
+            console.log('DEBUG: Total departments count:', allDepsData.departments?.length)
+
+            // Check if any departments have different organizationId
+            if (allDepsData.departments?.length > 0) {
+              const orgIds = [...new Set(allDepsData.departments.map((d: any) => d.organizationId))]
+              console.log('DEBUG: Unique organization IDs in departments:', orgIds)
+              console.log('DEBUG: Current user organizationId:', currentUser.$id)
+            }
+          }
+        } catch (debugError) {
+          console.error('DEBUG: Error fetching all departments:', debugError)
+        }
       } catch (error) {
         console.error('Authentication check failed:', error)
         router.push('/login')
