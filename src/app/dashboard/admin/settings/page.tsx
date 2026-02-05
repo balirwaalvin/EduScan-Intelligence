@@ -557,24 +557,6 @@ export default function SettingsPage() {
                 <div>
                   <h2 className="text-xl font-bold text-gray-900 mb-4">Organization Details</h2>
 
-                  {/* Info Notice */}
-                  <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                    <div className="flex items-start space-x-3">
-                      <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                      <div>
-                        <p className="text-sm font-semibold text-blue-800">Organization Settings</p>
-                        <p className="text-xs text-blue-700 mt-1">
-                          To enable Address, Phone, and Website fields, add these attributes to the Organizations collection in Appwrite:
-                          <br/>• address (String, 500, Optional)
-                          <br/>• phone (String, 20, Optional)
-                          <br/>• website (String, 255, Optional)
-                          <br/>
-                          <span className="font-semibold">See APPWRITE_ADD_ORGANIZATION_FIELDS.md for step-by-step instructions.</span>
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="md:col-span-2">
                       <label className="block text-sm font-medium text-gray-700 mb-2">
