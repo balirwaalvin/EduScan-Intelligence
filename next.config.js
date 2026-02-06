@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  output: 'standalone',
   images: {
     remotePatterns: [
       {
@@ -12,7 +13,10 @@ const nextConfig = {
         hostname: '**',
       },
     ],
+    unoptimized: true,
   },
+  // Disable telemetry in production
+  telemetry: false,
 }
 
 module.exports = nextConfig

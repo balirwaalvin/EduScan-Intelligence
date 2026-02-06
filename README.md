@@ -263,34 +263,76 @@ npm run test:e2e
 
 ## 🚀 Deployment
 
-### Production Build
+### Quick Deploy to DigitalOcean (Recommended) ⭐
+
+**Why DigitalOcean for QR Code System?**
+- ✅ Public URL accessible from any device
+- ✅ QR codes work on all mobile devices
+- ✅ Automatic HTTPS/SSL
+- ✅ Easy GitHub integration
+- ✅ Auto-deploy on push
+
+**Quick Start** (5 minutes):
+1. Push code to GitHub
+2. Create app on DigitalOcean App Platform
+3. Connect GitHub repository
+4. Add environment variables
+5. Deploy!
+
+📖 **Full Guide**: See [QUICK_DEPLOY_GUIDE.md](QUICK_DEPLOY_GUIDE.md)
+
+📋 **Detailed Documentation**: See [DIGITALOCEAN_DEPLOYMENT.md](DIGITALOCEAN_DEPLOYMENT.md)
+
+✅ **Checklist**: Use [DEPLOYMENT_CHECKLIST.md](DEPLOYMENT_CHECKLIST.md)
+
+### Other Deployment Options
+
+#### Production Build
 ```bash
 npm run build
 npm start
 ```
 
-### Deploy to Vercel
+#### Deploy with Docker
+```bash
+# Build image
+docker build -t eduscan:latest .
+
+# Run container
+docker run -d -p 3000:3000 --env-file .env.production eduscan:latest
+```
+
+#### Deploy to Vercel
 ```bash
 vercel --prod
 ```
 
-### Deploy to Docker
-```bash
-docker build -t eduscan .
-docker run -p 3000:3000 eduscan
-```
+### Environment Variables for Production
+
+Copy `.env.production.example` to `.env.production` and fill in:
+- `NEXT_PUBLIC_APP_URL` - Your production URL
+- `NEXT_PUBLIC_APPWRITE_*` - Your Appwrite credentials
+- `JWT_SECRET` - Strong secret for JWT tokens
 
 ## 📈 Roadmap
 
+- [x] QR Code attendance system with live dashboard ✅
+- [x] In-app QR code generation ✅
+- [x] Real-time attendance tracking ✅
+- [x] Admin dashboard with analytics ✅
+- [x] Department and course management ✅
+- [x] User management system ✅
+- [x] Organization settings ✅
 - [ ] Mobile apps (iOS & Android)
 - [ ] Advanced facial recognition with liveness detection
 - [ ] Geofencing for location-based attendance
 - [ ] Integration with popular LMS platforms
 - [ ] AI-powered attendance predictions
 - [ ] Multi-language support
-- [ ] Dark mode
 - [ ] WebSocket for real-time updates
 - [ ] Advanced analytics with ML insights
+- [ ] Attendance reports export (CSV/PDF)
+- [ ] Email notifications
 
 ## 🤝 Contributing
 
@@ -303,8 +345,10 @@ This project is licensed under the MIT License - see [LICENSE.md](LICENSE.md) fo
 ## 💬 Support
 
 - **Email**: support@eduscan.com
-- **Documentation**: https://docs.eduscan.com
-- **Community**: https://community.eduscan.com
+- **Documentation**: See our comprehensive guides:
+  - [Getting Started](GETTING_STARTED.md)
+  - [QR Attendance Setup](QR_ATTENDANCE_COMPLETE_SETUP.md)
+  - [Deployment Guide](DIGITALOCEAN_DEPLOYMENT.md)
 - **Issue Tracker**: https://github.com/yourusername/eduscan/issues
 
 ## 🙏 Acknowledgments
@@ -312,6 +356,7 @@ This project is licensed under the MIT License - see [LICENSE.md](LICENSE.md) fo
 - Icons by [Lucide](https://lucide.dev)
 - UI inspiration from [Tailwind UI](https://tailwindui.com)
 - Animation library [Framer Motion](https://www.framer.com/motion/)
+- Backend by [Appwrite](https://appwrite.io)
 
 ---
 
