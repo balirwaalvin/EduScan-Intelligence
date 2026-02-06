@@ -31,7 +31,6 @@ export default function SessionsPage() {
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
-    courseId: '',
     startTime: '',
     endTime: '',
     location: '',
@@ -405,9 +404,10 @@ export default function SessionsPage() {
                       type="number"
                       min="0"
                       value={formData.lateThreshold}
-                      onChange={(e) =>
-                        setFormData({ ...formData, lateThreshold: parseInt(e.target.value) })
-                      }
+                      onChange={(e) => {
+                        const value = e.target.value === '' ? 0 : parseInt(e.target.value);
+                        setFormData({ ...formData, lateThreshold: isNaN(value) ? 0 : value });
+                      }}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                     />
                   </div>

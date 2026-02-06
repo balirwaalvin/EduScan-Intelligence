@@ -247,36 +247,62 @@ export default function DashboardLayout({ children, role, user }: DashboardLayou
           </button>
 
           <div className="flex-1 px-4 flex justify-between items-center">
-            {/* Animated Dashboard Title */}
+            {/* Animated Dashboard Title with Enhanced Effects */}
             <div className="flex-1 group">
               <div className="relative inline-block">
-                <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-primary-600 via-accent-600 to-primary-600 bg-clip-text text-transparent animate-gradient-x bg-[length:200%_auto] transition-all duration-300 hover:scale-105 cursor-default">
+                {/* Main title with multiple animation layers */}
+                <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-primary-600 via-accent-600 to-primary-600 bg-clip-text text-transparent animate-gradient-x bg-[length:200%_auto] transition-all duration-300 hover:scale-105 cursor-default relative z-10">
                   {user?.organization?.name || 'EduScan Dashboard'}
                 </h1>
-                {/* Animated underline */}
-                <div className="absolute -bottom-1 left-0 h-0.5 w-0 bg-gradient-to-r from-primary-600 to-accent-600 transition-all duration-500 group-hover:w-full"></div>
-                {/* Sparkle effect */}
+
+                {/* Animated underline with gradient */}
+                <div className="absolute -bottom-1 left-0 h-0.5 w-0 bg-gradient-to-r from-primary-600 via-accent-600 to-primary-600 transition-all duration-500 group-hover:w-full shadow-sm shadow-accent-300"></div>
+
+                {/* Multiple sparkle effects */}
                 <div className="absolute -top-1 -right-1 w-2 h-2 bg-accent-500 rounded-full opacity-0 group-hover:opacity-100 group-hover:animate-ping"></div>
+                <div className="absolute top-0 left-0 w-1.5 h-1.5 bg-primary-500 rounded-full opacity-0 group-hover:opacity-100 group-hover:animate-ping animation-delay-100"></div>
+                <div className="absolute -top-2 left-1/2 w-1 h-1 bg-accent-400 rounded-full opacity-0 group-hover:opacity-100 group-hover:animate-ping animation-delay-200"></div>
+
+                {/* Glow effect behind text */}
+                <div className="absolute inset-0 bg-gradient-to-r from-primary-400/20 via-accent-400/20 to-primary-400/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10"></div>
+
+                {/* Floating particles */}
+                <div className="absolute -top-3 left-1/4 w-1 h-1 bg-primary-400 rounded-full opacity-0 group-hover:opacity-60 group-hover:animate-float-delayed"></div>
+                <div className="absolute -top-4 right-1/4 w-1.5 h-1.5 bg-accent-400 rounded-full opacity-0 group-hover:opacity-60 group-hover:animate-float-delayed animation-delay-300"></div>
               </div>
             </div>
 
-            {/* Animated Notification Bell */}
+            {/* Enhanced Animated Notification Bell and Actions */}
             <div className="ml-4 flex items-center md:ml-6 space-x-3">
+              {/* Notification Bell with Advanced Animations */}
               <div className="relative group">
-                <button className="relative p-2.5 rounded-full text-gray-400 hover:text-primary-600 hover:bg-gradient-to-br hover:from-primary-50 hover:to-accent-50 transition-all duration-300 transform hover:scale-110 hover:rotate-12 active:scale-95">
+                <button className="relative p-2.5 rounded-full text-gray-400 hover:text-primary-600 hover:bg-gradient-to-br hover:from-primary-50 hover:to-accent-50 transition-all duration-300 transform hover:scale-110 hover:rotate-12 active:scale-95 shadow-sm hover:shadow-lg">
                   <Bell className="h-6 w-6 transition-transform duration-300 group-hover:animate-swing" />
-                  {/* Notification badge */}
+
+                  {/* Notification badge with pulse */}
                   <span className="absolute top-1 right-1 flex h-3 w-3">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-3 w-3 bg-accent-500"></span>
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-accent-500 shadow-lg shadow-accent-300"></span>
                   </span>
-                  {/* Glow effect on hover */}
+
+                  {/* Multi-layer glow effect on hover */}
                   <span className="absolute inset-0 rounded-full bg-gradient-to-r from-primary-400 to-accent-400 opacity-0 group-hover:opacity-20 blur-md transition-opacity duration-300"></span>
+                  <span className="absolute inset-0 rounded-full bg-gradient-to-r from-primary-300 to-accent-300 opacity-0 group-hover:opacity-10 blur-xl transition-opacity duration-500"></span>
+
+                  {/* Ring pulse effect */}
+                  <span className="absolute inset-0 rounded-full border-2 border-primary-400 opacity-0 group-hover:opacity-100 group-hover:animate-ping"></span>
                 </button>
-                {/* Tooltip */}
-                <div className="absolute top-full right-0 mt-2 px-3 py-1.5 bg-gray-900 text-white text-xs rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap shadow-lg">
-                  3 new notifications
-                  <div className="absolute -top-1 right-4 w-2 h-2 bg-gray-900 transform rotate-45"></div>
+
+                {/* Enhanced Tooltip with animation */}
+                <div className="absolute top-full right-0 mt-2 px-3 py-1.5 bg-gradient-to-br from-gray-900 to-gray-800 text-white text-xs rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap shadow-xl transform group-hover:translate-y-0 translate-y-2 border border-gray-700">
+                  <div className="flex items-center space-x-2">
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-accent-500"></span>
+                    </span>
+                    <span>3 new notifications</span>
+                  </div>
+                  <div className="absolute -top-1 right-4 w-2 h-2 bg-gray-900 transform rotate-45 border-l border-t border-gray-700"></div>
                 </div>
               </div>
             </div>

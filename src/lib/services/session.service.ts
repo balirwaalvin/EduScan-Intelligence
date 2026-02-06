@@ -56,19 +56,31 @@ export const sessionService = {
    */
   async createSession(sessionData: any) {
     try {
+      const now = new Date().toISOString();
+
       const session = await serverDatabases.createDocument(
         DATABASE_ID,
         COLLECTIONS.SESSIONS,
         'unique()',
         {
-          ...sessionData,
+          name: sessionData.name,
+          organizationId: sessionData.organizationId,
+          creatorId: sessionData.creatorId,
+          startTime: sessionData.startTime,
+          endTime: sessionData.endTime,
+          location: sessionData.location || '',
+          allowedMethods: sessionData.allowedMethods || ['QR_CODE'],
+          lateThreshold: sessionData.lateThreshold || 15,
+          status: 'SCHEDULED', // Required attribute: SCHEDULED, ACTIVE, ENDED, CANCELLED
           isActive: true,
-          createdAt: new Date().toISOString(),
+          createdAt: now,
+          updatedAt: now,
         }
       );
 
       return { success: true, session };
     } catch (error: any) {
+      console.error('Error creating session:', error);
       return { success: false, error: error.message };
     }
   },
@@ -82,11 +94,15 @@ export const sessionService = {
         DATABASE_ID,
         COLLECTIONS.SESSIONS,
         sessionId,
-        updates
+        {
+          ...updates,
+          updatedAt: new Date().toISOString(),
+        }
       );
 
       return { success: true, session };
     } catch (error: any) {
+      console.error('Error updating session:', error);
       return { success: false, error: error.message };
     }
   },
