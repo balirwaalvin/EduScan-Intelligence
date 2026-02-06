@@ -52,12 +52,14 @@ export const sessionService = {
   },
 
   /**
-   * Create a new session
+   * Create a new session - MINIMAL SCHEMA
+   * Only includes attributes that exist in Appwrite
    */
   async createSession(sessionData: any) {
     try {
       const now = new Date().toISOString();
 
+      // Use ONLY the minimal set of attributes that exist in Appwrite
       const session = await serverDatabases.createDocument(
         DATABASE_ID,
         COLLECTIONS.SESSIONS,
@@ -67,10 +69,7 @@ export const sessionService = {
           organizationId: sessionData.organizationId,
           startTime: sessionData.startTime,
           endTime: sessionData.endTime,
-          location: sessionData.location || '',
-          allowedMethods: sessionData.allowedMethods || ['QR_CODE'],
-          lateThreshold: sessionData.lateThreshold || 15,
-          status: 'SCHEDULED', // Required attribute: SCHEDULED, ACTIVE, ENDED, CANCELLED
+          status: 'SCHEDULED',
           isActive: true,
           createdAt: now,
           updatedAt: now,
