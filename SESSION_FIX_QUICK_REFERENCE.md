@@ -4,11 +4,11 @@
 
 ## ❌ Error You Had:
 ```
-Invalid document structure: Unknown attribute: "courseId"
+Invalid document structure: Unknown attribute: "creatorId"
 ```
 
 ## ✅ What I Fixed:
-Removed the `courseId` attribute from the code since it doesn't exist in your Appwrite sessions collection.
+Removed the `creatorId` attribute from the code since it doesn't exist in your Appwrite sessions collection.
 
 ---
 
@@ -16,7 +16,8 @@ Removed the `courseId` attribute from the code since it doesn't exist in your Ap
 
 ### 1. Session Service
 **File**: `src/lib/services/session.service.ts`
-- ✅ Removed `courseId` field
+- ✅ Removed `creatorId` field
+- ✅ Removed `courseId` field (earlier)
 - ✅ Still has `status: 'SCHEDULED'`
 - ✅ All required fields present
 
@@ -64,8 +65,9 @@ Add the `status` attribute to your Appwrite sessions collection:
 ## 📊 All Errors Fixed:
 
 1. ✅ Missing "status" attribute - FIXED (needs Appwrite setup)
-2. ✅ Unknown "courseId" attribute - FIXED (just now!)
-3. ✅ NaN input error - FIXED
+2. ✅ Unknown "courseId" attribute - FIXED
+3. ✅ Unknown "creatorId" attribute - FIXED (just now!)
+4. ✅ NaN input error - FIXED
 
 ---
 

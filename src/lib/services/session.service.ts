@@ -65,7 +65,6 @@ export const sessionService = {
         {
           name: sessionData.name,
           organizationId: sessionData.organizationId,
-          creatorId: sessionData.creatorId,
           startTime: sessionData.startTime,
           endTime: sessionData.endTime,
           location: sessionData.location || '',

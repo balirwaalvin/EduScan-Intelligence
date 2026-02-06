@@ -37,7 +37,18 @@ Invalid document structure: Unknown attribute: "courseId"
 
 ---
 
-### 3. ❌ NaN Input Value Error
+### 3. ❌ Unknown "creatorId" Attribute Error
+```
+Invalid document structure: Unknown attribute: "creatorId"
+```
+
+**Fix**: Removed `creatorId` from session service  
+**File**: `src/lib/services/session.service.ts`  
+**Status**: ✅ Completely Fixed
+
+---
+
+### 4. ❌ NaN Input Value Error
 ```
 Received NaN for the `value` attribute. If this is expected, cast the value to a string.
 ```
@@ -82,7 +93,6 @@ Here's the final, correct schema for your sessions collection:
 |-----------|------|------|----------|---------|-------|
 | `name` | String | 255 | ✅ Yes | - | ❌ No |
 | `organizationId` | String | 50 | ✅ Yes | - | ❌ No |
-| `creatorId` | String | 50 | ✅ Yes | - | ❌ No |
 | `startTime` | String | 50 | ✅ Yes | - | ❌ No |
 | `endTime` | String | 50 | ✅ Yes | - | ❌ No |
 | `location` | String | 255 | ❌ No | '' | ❌ No |

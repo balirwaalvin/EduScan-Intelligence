@@ -29,7 +29,6 @@ Make sure your Appwrite `sessions` collection has these attributes:
 |----------------|------|------|----------|---------|-------|
 | `name` | String | 255 | ✅ Yes | - | ❌ No |
 | `organizationId` | String | 50 | ✅ Yes | - | ❌ No |
-| `creatorId` | String | 50 | ✅ Yes | - | ❌ No |
 | `startTime` | String | 50 | ✅ Yes | - | ❌ No |
 | `endTime` | String | 50 | ✅ Yes | - | ❌ No |
 | `location` | String | 255 | ❌ No | '' | ❌ No |
