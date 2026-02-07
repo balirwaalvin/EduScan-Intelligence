@@ -22,15 +22,16 @@ export interface AttendanceRecord {
 
 export interface Organization {
   name: string;
+  type: string;
   email: string;
-  adminId: string;
-  plan: 'free' | 'basic' | 'premium' | 'enterprise';
-  trialEndsAt?: string;
-  settings?: {
-    allowedMethods: string[];
-    autoCheckout: boolean;
-    lateThreshold: number;
-  };
+  phone?: string;
+  address?: string;
+  website?: string;
+  subscriptionStatus?: string;
+  trialStartDate?: string;
+  trialEndDate?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface Session {
