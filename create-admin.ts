@@ -62,13 +62,16 @@ async function createAdminAccount() {
     console.log('\n🏢 Step 4: Creating admin organization...');
     const orgResult = await databaseService.createOrganization({
       name: 'EduScan Admin',
+      type: 'EDUCATIONAL',
       email: 'admin@edu-scan.app',
-      adminId: userResult.user!.$id,
-      plan: 'enterprise',
-      allowedMethods: ['qr', 'rfid', 'facial'],
-      autoCheckout: false,
-      lateThresholdMinutes: 15,
-      timezone: 'UTC'
+      phone: '',
+      address: '',
+      website: '',
+      subscriptionStatus: 'ACTIVE',
+      trialStartDate: new Date().toISOString(),
+      trialEndDate: new Date(Date.now() + 24 * 24 * 60 * 60 * 1000).toISOString(), // 24 days trial
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
     });
 
     if (!orgResult.success) {
@@ -79,7 +82,8 @@ async function createAdminAccount() {
     console.log('✅ Organization created successfully!');
     console.log('   Organization ID:', orgResult.document?.$id);
     console.log('   Name:', orgResult.document?.name);
-    console.log('   Plan:', orgResult.document?.plan);
+    console.log('   Type:', orgResult.document?.type);
+    console.log('   Subscription:', orgResult.document?.subscriptionStatus);
 
     // Success Summary
     console.log('\n' + '='.repeat(60));
@@ -91,7 +95,7 @@ async function createAdminAccount() {
     console.log('   Name:         System Administrator');
     console.log('   User ID:      ' + userResult.user?.$id);
     console.log('   Org ID:       ' + orgResult.document?.$id);
-    console.log('   Plan:         Enterprise');
+    console.log('   Subscription: Active (24-day trial)');
     console.log('\n✅ You can now login to the dashboard!');
     console.log('='.repeat(60) + '\n');
 
