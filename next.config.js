@@ -15,8 +15,6 @@ const nextConfig = {
     ],
     unoptimized: true,
   },
-  // Disable telemetry in production
-  telemetry: false,
 }
 
 module.exports = nextConfig
