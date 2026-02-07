@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: result.error }, { status: 400 });
     }
 
-    console.log('Organization created successfully:', result.organization.$id);
+    console.log('Organization created successfully:', result.organization?.$id);
 
     return NextResponse.json({ organization: result.organization }, { status: 201 });
   } catch (error: any) {
