@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { databases, DATABASE_ID, ORGANIZATIONS_COLLECTION_ID, USERS_COLLECTION_ID } from '@/lib/appwrite'
+import { databases, DATABASE_ID, COLLECTIONS } from '@/lib/appwrite'
 import { ID, Query } from 'node-appwrite'
 import { hashPassword, generateRandomPassword } from '@/lib/auth'
 import { addDays } from 'date-fns'
@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
     // Check if organization email already exists
     const existingOrgs = await databases.listDocuments(
       DATABASE_ID,
-      ORGANIZATIONS_COLLECTION_ID,
+      COLLECTIONS.ORGANIZATIONS,
       [Query.equal('email', email)]
     )
 
@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
     // Check if admin email already exists
     const existingUsers = await databases.listDocuments(
       DATABASE_ID,
-      USERS_COLLECTION_ID,
+      COLLECTIONS.USERS,
       [Query.equal('email', adminEmail)]
     )
 
@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
     // Create organization
     const organization = await databases.createDocument(
       DATABASE_ID,
-      ORGANIZATIONS_COLLECTION_ID,
+      COLLECTIONS.ORGANIZATIONS,
       ID.unique(),
       {
         name: organizationName,
@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
     // Create admin user
     const admin = await databases.createDocument(
       DATABASE_ID,
-      USERS_COLLECTION_ID,
+      COLLECTIONS.USERS,
       ID.unique(),
       {
         email: adminEmail,
