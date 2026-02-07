@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { databases, DATABASE_ID, ORGANIZATIONS_COLLECTION_ID, USERS_COLLECTION_ID } from '@/lib/appwrite'
+import { ID, Query } from 'node-appwrite'
 import { hashPassword, generateRandomPassword } from '@/lib/auth'
 import { addDays } from 'date-fns'
 
@@ -33,11 +34,13 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if organization email already exists
-    const existingOrg = await prisma.organization.findUnique({
-      where: { email },
-    })
+    const existingOrgs = await databases.listDocuments(
+      DATABASE_ID,
+      ORGANIZATIONS_COLLECTION_ID,
+      [Query.equal('email', email)]
+    )
 
-    if (existingOrg) {
+    if (existingOrgs.documents.length > 0) {
       return NextResponse.json(
         { error: 'Organization with this email already exists' },
         { status: 409 }
@@ -45,11 +48,13 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if admin email already exists
-    const existingUser = await prisma.user.findUnique({
-      where: { email: adminEmail },
-    })
+    const existingUsers = await databases.listDocuments(
+      DATABASE_ID,
+      USERS_COLLECTION_ID,
+      [Query.equal('email', adminEmail)]
+    )
 
-    if (existingUser) {
+    if (existingUsers.documents.length > 0) {
       return NextResponse.json(
         { error: 'User with this email already exists' },
         { status: 409 }
@@ -63,43 +68,49 @@ export async function POST(request: NextRequest) {
     // Calculate trial end date (24 days from now)
     const trialEndDate = addDays(new Date(), 24)
 
-    // Create organization and admin user in a transaction
-    const result = await prisma.$transaction(async (tx) => {
-      // Create organization
-      const organization = await tx.organization.create({
-        data: {
-          name: organizationName,
-          type: organizationType,
-          email,
-          phone: phone || null,
-          address: address || null,
-          subscriptionStatus: 'TRIAL',
-          trialStartDate: new Date(),
-          trialEndDate,
-        },
-      })
+    // Create organization
+    const organization = await databases.createDocument(
+      DATABASE_ID,
+      ORGANIZATIONS_COLLECTION_ID,
+      ID.unique(),
+      {
+        name: organizationName,
+        type: organizationType,
+        email,
+        phone: phone || '',
+        address: address || '',
+        website: '',
+        subscriptionStatus: 'TRIAL',
+        trialStartDate: new Date().toISOString(),
+        trialEndDate: trialEndDate.toISOString(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      }
+    )
 
-      // Create admin user
-      const admin = await tx.user.create({
-        data: {
-          email: adminEmail,
-          password: hashedPassword,
-          firstName: adminFirstName,
-          lastName: adminLastName,
-          role: 'ADMIN',
-          organizationId: organization.id,
-          isActive: true,
-        },
-      })
-
-      return { organization, admin, password: adminPassword }
-    })
+    // Create admin user
+    const admin = await databases.createDocument(
+      DATABASE_ID,
+      USERS_COLLECTION_ID,
+      ID.unique(),
+      {
+        email: adminEmail,
+        password: hashedPassword,
+        name: `${adminFirstName} ${adminLastName}`,
+        role: 'ADMIN',
+        organizationId: organization.$id,
+        department: '',
+        phone: '',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      }
+    )
 
     // TODO: Send email with credentials
     // In a real application, you would integrate with an email service like SendGrid, AWS SES, etc.
     console.log('Admin Credentials:', {
       email: adminEmail,
-      password: result.password,
+      password: adminPassword,
       trialEndDate: trialEndDate.toISOString(),
     })
 
