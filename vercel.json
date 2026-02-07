@@ -1,0 +1,10 @@
+# Vercel Configuration for EduScan
+# This file tells Vercel how to build and deploy your app
+
+{
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
+  "framework": "nextjs",
+  "outputDirectory": ".next"
+}

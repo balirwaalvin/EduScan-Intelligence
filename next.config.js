@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  output: 'standalone',
+  // Removed 'standalone' output - works better with Vercel
   images: {
     remotePatterns: [
       {
