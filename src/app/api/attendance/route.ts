@@ -88,6 +88,7 @@ export async function POST(request: NextRequest) {
         status,
         method: body.method || 'QR_CODE',
         checkInTime: now.toISOString(),
+        createdAt: now.toISOString(),
       }
     )
 
