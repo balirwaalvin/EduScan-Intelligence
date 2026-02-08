@@ -1,11 +1,11 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { Check, AlertCircle, Loader2, QrCode as QrCodeIcon, Clock, MapPin } from 'lucide-react'
+import { Check, AlertCircle, Loader2, QrCode as QrCodeIcon, Clock } from 'lucide-react'
 
-export default function AttendancePage() {
+function AttendanceContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const sessionId = searchParams.get('sessionId')
@@ -253,5 +253,17 @@ export default function AttendancePage() {
         </p>
       </motion.div>
     </div>
+  )
+}
+
+export default function AttendancePage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <Loader2 className="w-10 h-10 text-primary-600 animate-spin" />
+      </div>
+    }>
+      <AttendanceContent />
+    </Suspense>
   )
 }
