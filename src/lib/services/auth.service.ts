@@ -130,7 +130,7 @@ export const authService = {
    */
   async updateRecovery(userId: string, secret: string, password: string) {
     try {
-      const result = await account.updateRecovery(userId, secret, password, password);
+      const result = await account.updateRecovery(userId, secret, password);
       return { success: true, result };
     } catch (error: any) {
       return { success: false, error: error.message };
