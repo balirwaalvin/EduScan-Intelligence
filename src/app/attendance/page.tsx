@@ -49,8 +49,8 @@ function AttendanceContent() {
     setError('')
 
     try {
-      // Generate a unique userId from email
-      const userId = formData.userEmail.toLowerCase().replace(/[^a-z0-9]/g, '_')
+      // Generate a unique userId from email that is safe for Appwrite Document ID
+      const userId = formData.userEmail.toLowerCase().replace(/[^a-z0-9]/g, '_').substring(0, 36)
 
       const response = await fetch('/api/attendance', {
         method: 'POST',

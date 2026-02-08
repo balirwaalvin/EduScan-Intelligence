@@ -42,11 +42,18 @@ export async function POST(request: NextRequest) {
               studentId: studentId || '',
               createdAt: new Date().toISOString(),
               isActive: true,
+              phoneNumber: '',
             }
           )
-        } catch (createError) {
-          console.error('Error creating user:', createError)
-          // Continue anyway, maybe they exist now or it's a different error
+        } catch (createError: any) {
+          console.error('Error creating user:', createError.message)
+          console.error('Payload:', {
+             email: userEmail,
+             name: userName,
+             role: userRole,
+             userId
+          })
+          // Consider failing if user creation critical, but for now continue
         }
       }
     }

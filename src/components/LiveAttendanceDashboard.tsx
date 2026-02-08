@@ -176,7 +176,7 @@ export default function LiveAttendanceDashboard({ sessionId, sessionName, onClos
                         <div className="text-right text-sm text-gray-500">
                           <div className="flex items-center space-x-1">
                             <Clock className="w-4 h-4" />
-                            <span>{formatTime(record.markedAt)}</span>
+                            <span>{formatTime(record.checkInTime || record.markedAt)}</span>
                           </div>
                         </div>
                         <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${getStatusColor(record.status)}`}>
