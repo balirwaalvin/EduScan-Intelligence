@@ -126,9 +126,11 @@ export async function POST(request: NextRequest) {
         method: body.method || 'QR_CODE',
         checkInTime: now.toISOString(),
         createdAt: now.toISOString(),
-        // Snapshot data
-        userName,
+        
+        // Use 'userName' and 'userEmail' as explicitly confirmed by user
+        userName, 
         userEmail,
+        
         studentId: studentId || '',
         department: department || ''
     };
@@ -220,13 +222,6 @@ export async function GET(request: NextRequest) {
         Query.equal('sessionId', sessionId),
         Query.orderDesc('checkInTime')
     ];
-    
-    // Using limit(1) if countOnly just to be safe and avoid fetching many docs, 
-    // but limit(0) is best for total if supported. Let's assume limit(0) works or use limit(1).
-    // Actually limit(0) is not supported in older Appwrite versions sometimes.
-    // But `countOnly` logic implies we return total.
-    // Let's use limit(1) and rely on .total property if limit(0) fails validation.
-    // But let's verify if I can just trust .total with limit(1). Yes.
     
     if (countOnly) {
        // Just fetch 1 to get total efficiently? Or 0.
