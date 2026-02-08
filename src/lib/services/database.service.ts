@@ -22,11 +22,17 @@ export interface AttendanceRecord {
 
 export interface Organization {
   name: string;
-  type: string;
+  type?: string;
   email: string;
   phone?: string;
   address?: string;
   website?: string;
+  adminId?: string;
+  plan?: string;
+  allowedMethods?: string[];
+  autoCheckout?: boolean;
+  lateThresholdMinutes?: number;
+  timezone?: string;
   subscriptionStatus?: string;
   trialStartDate?: string;
   trialEndDate?: string;
