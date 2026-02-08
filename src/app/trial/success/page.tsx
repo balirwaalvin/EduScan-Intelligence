@@ -1,12 +1,12 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense } from 'react'
 import { motion } from 'framer-motion'
-import { CheckCircle2, Mail, ArrowRight, Sparkles } from 'lucide-react'
+import { CheckCircle2, Mail, ArrowRight, Sparkles, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 
-export default function TrialSuccessPage() {
+function TrialSuccessContent() {
   const searchParams = useSearchParams()
   const email = searchParams.get('email')
 
@@ -132,5 +132,17 @@ export default function TrialSuccessPage() {
         </motion.div>
       </div>
     </div>
+  )
+}
+
+export default function TrialSuccessPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <Loader2 className="w-10 h-10 text-primary-600 animate-spin" />
+      </div>
+    }>
+      <TrialSuccessContent />
+    </Suspense>
   )
 }
