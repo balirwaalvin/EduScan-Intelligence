@@ -85,15 +85,9 @@ export async function POST(request: NextRequest) {
         sessionId,
         userId,
         organizationId,
-        userName,
-        userEmail,
-        userRole,
-        department: department || '',
-        studentId: studentId || '',
         status,
         method: body.method || 'QR_CODE',
         checkInTime: now.toISOString(),
-        createdAt: now.toISOString(),
       }
     )
 
