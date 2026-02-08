@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { serverDatabases } from '@/lib/appwrite-server'
-import { DATABASE_ID } from '@/lib/appwrite'
+import { DATABASE_ID, COLLECTIONS } from '@/lib/appwrite'
 import { Query, ID } from 'node-appwrite'
 
 const ATTENDANCE_COLLECTION_ID = process.env.NEXT_PUBLIC_APPWRITE_ATTENDANCE_COLLECTION_ID || 'attendance'
@@ -16,6 +16,39 @@ export async function POST(request: NextRequest) {
         { error: 'Missing required fields' },
         { status: 400 }
       )
+    }
+
+    // Ensure user exists in Users collection
+    try {
+      await serverDatabases.getDocument(
+        DATABASE_ID,
+        COLLECTIONS.USERS,
+        userId
+      )
+    } catch (error: any) {
+      // If user not found (404), create them
+      if (error.code === 404) {
+        try {
+          await serverDatabases.createDocument(
+            DATABASE_ID,
+            COLLECTIONS.USERS,
+            userId,
+            {
+              email: userEmail,
+              name: userName,
+              role: userRole,
+              organizationId,
+              department: department || '',
+              studentId: studentId || '',
+              createdAt: new Date().toISOString(),
+              isActive: true,
+            }
+          )
+        } catch (createError) {
+          console.error('Error creating user:', createError)
+          // Continue anyway, maybe they exist now or it's a different error
+        }
+      }
     }
 
     // Check if attendance already marked
@@ -144,12 +177,39 @@ export async function GET(request: NextRequest) {
       [
         Query.equal('sessionId', sessionId),
         Query.orderDesc('checkInTime'),
-        Query.limit(1000),
+        Query.limit(100), // Reduced limit for performance with user fetching
       ]
     )
 
+    // Enrich attendance records with user details
+    const enrichedAttendance = await Promise.all(
+      attendance.documents.map(async (record: any) => {
+        try {
+          const user = await serverDatabases.getDocument(
+            DATABASE_ID,
+            COLLECTIONS.USERS,
+            record.userId
+          )
+          return {
+            ...record,
+            userName: user.name,
+            userEmail: user.email,
+            department: user.department,
+            studentId: user.studentId,
+          }
+        } catch (e) {
+          // If user not found, return record as is (or with placeholders)
+          return {
+            ...record,
+            userName: 'Unknown User',
+            userEmail: 'N/A',
+          }
+        }
+      })
+    )
+
     return NextResponse.json({
-      attendance: attendance.documents,
+      attendance: enrichedAttendance,
       total: attendance.total,
     })
 
