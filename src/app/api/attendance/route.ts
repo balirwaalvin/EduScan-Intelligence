@@ -91,6 +91,7 @@ export async function POST(request: NextRequest) {
         department: department || '',
         studentId: studentId || '',
         status,
+        method: body.method || 'QR_CODE',
         markedAt: now.toISOString(),
         createdAt: now.toISOString(),
       }

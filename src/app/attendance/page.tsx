@@ -59,6 +59,7 @@ function AttendanceContent() {
           sessionId,
           userId,
           organizationId,
+          method: 'QR_CODE',
           ...formData,
         }),
       })
