@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
         studentId: studentId || '',
         status,
         method: body.method || 'QR_CODE',
-        markedAt: now.toISOString(),
+        checkInTime: now.toISOString(),
         createdAt: now.toISOString(),
       }
     )
@@ -148,7 +148,7 @@ export async function GET(request: NextRequest) {
       ATTENDANCE_COLLECTION_ID,
       [
         Query.equal('sessionId', sessionId),
-        Query.orderDesc('markedAt'),
+        Query.orderDesc('checkInTime'),
         Query.limit(1000),
       ]
     )
