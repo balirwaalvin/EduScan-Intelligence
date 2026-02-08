@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Users, Clock, TrendingUp, CheckCircle, AlertCircle, X, RefreshCw } from 'lucide-react'
+import { Users, Clock, TrendingUp, CheckCircle, AlertCircle, X, RefreshCw, Timer } from 'lucide-react'
 
 interface LiveAttendanceDashboardProps {
   sessionId: string
@@ -14,8 +14,11 @@ export default function LiveAttendanceDashboard({ sessionId, sessionName, onClos
   const [attendance, setAttendance] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [autoRefresh, setAutoRefresh] = useState(true)
+  const [sessionDetails, setSessionDetails] = useState<any>(null)
+  const [timeLeft, setTimeLeft] = useState<string>('')
 
   useEffect(() => {
+    fetchSessionDetails()
     fetchAttendance()
 
     if (autoRefresh) {
@@ -23,6 +26,54 @@ export default function LiveAttendanceDashboard({ sessionId, sessionName, onClos
       return () => clearInterval(interval)
     }
   }, [sessionId, autoRefresh])
+
+  useEffect(() => {
+    if (sessionDetails) {
+      const timer = setInterval(() => {
+        updateTimer()
+      }, 1000)
+      updateTimer() // Initial call
+      return () => clearInterval(timer)
+    }
+  }, [sessionDetails])
+
+  const fetchSessionDetails = async () => {
+    try {
+      const response = await fetch(`/api/sessions?sessionId=${sessionId}`)
+      if (response.ok) {
+        const data = await response.json()
+        setSessionDetails(data.session)
+      }
+    } catch (error) {
+      console.error('Error fetching session details:', error)
+    }
+  }
+
+  const updateTimer = () => {
+    if (!sessionDetails) return
+
+    const now = new Date().getTime()
+    const start = new Date(sessionDetails.startTime).getTime()
+    const end = new Date(sessionDetails.endTime).getTime()
+
+    if (now < start) {
+      const diff = start - now
+      setTimeLeft(`Starts in ${formatDuration(diff)}`)
+    } else if (now >= start && now <= end) {
+      const diff = end - now
+      setTimeLeft(`${formatDuration(diff)} remaining`)
+    } else {
+      setTimeLeft('Session Ended')
+    }
+  }
+
+  const formatDuration = (ms: number) => {
+    const totalSeconds = Math.floor(ms / 1000)
+    const hours = Math.floor(totalSeconds / 3600)
+    const minutes = Math.floor((totalSeconds % 3600) / 60)
+    const seconds = totalSeconds % 60
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+  }
 
   const fetchAttendance = async () => {
     try {
@@ -76,6 +127,14 @@ export default function LiveAttendanceDashboard({ sessionId, sessionName, onClos
               <p className="text-white/90">{sessionName}</p>
             </div>
             <div className="flex items-center space-x-3">
+              {/* Timer Display */}
+              <div className="bg-white/20 backdrop-blur-md px-4 py-2 rounded-lg flex items-center space-x-2 border border-white/10">
+                <Timer className="w-5 h-5 animate-pulse" />
+                <span className="font-mono font-bold text-lg">{timeLeft || '--:--:--'}</span>
+              </div>
+              
+              <div className="h-8 w-px bg-white/20 mx-2"></div>
+
               <button
                 onClick={() => setAutoRefresh(!autoRefresh)}
                 className={`p-2 rounded-lg transition ${
@@ -160,14 +219,14 @@ export default function LiveAttendanceDashboard({ sessionId, sessionName, onClos
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
-                        <h3 className="font-semibold text-gray-900">{record.userName}</h3>
+                        <h3 className="font-semibold text-gray-900">{record.userName || 'Unknown User'}</h3>
                         <div className="flex items-center space-x-4 mt-1 text-sm text-gray-600">
-                          <span>{record.userEmail}</span>
+                          <span>{record.userEmail || 'No Email'}</span>
                           {record.studentId && (
                             <span className="text-primary-600">ID: {record.studentId}</span>
                           )}
                           {record.department && (
-                            <span>{record.department}</span>
+                            <span className="bg-gray-100 px-2 py-0.5 rounded text-xs">{record.department}</span>
                           )}
                         </div>
                       </div>

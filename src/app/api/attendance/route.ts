@@ -26,6 +26,7 @@ export async function POST(request: NextRequest) {
         userId
       )
     } catch (error: any) {
+      console.log(`User ${userId} not found, attempting creation...`);
       // If user not found (404), create them
       if (error.code === 404) {
         try {
@@ -117,11 +118,7 @@ export async function POST(request: NextRequest) {
     const status = now <= lateTime ? 'PRESENT' : 'LATE'
 
     // Create attendance record
-    const attendance = await serverDatabases.createDocument(
-      DATABASE_ID,
-      ATTENDANCE_COLLECTION_ID,
-      ID.unique(),
-      {
+    const fullPayload = {
         sessionId,
         userId,
         organizationId,
@@ -129,8 +126,39 @@ export async function POST(request: NextRequest) {
         method: body.method || 'QR_CODE',
         checkInTime: now.toISOString(),
         createdAt: now.toISOString(),
-      }
-    )
+        // Snapshot data
+        userName,
+        userEmail,
+        studentId: studentId || '',
+        department: department || ''
+    };
+
+    let attendance;
+    try {
+        attendance = await serverDatabases.createDocument(
+          DATABASE_ID,
+          ATTENDANCE_COLLECTION_ID,
+          ID.unique(),
+          fullPayload
+        )
+    } catch (e: any) {
+        console.warn("Failed to create attendance with snapshot data, retrying with minimal...", e.message);
+        // Retry with minimal payload
+        attendance = await serverDatabases.createDocument(
+            DATABASE_ID,
+            ATTENDANCE_COLLECTION_ID,
+            ID.unique(),
+            {
+                sessionId,
+                userId,
+                organizationId,
+                status,
+                method: body.method || 'QR_CODE',
+                checkInTime: now.toISOString(),
+                createdAt: now.toISOString(),
+            }
+        )
+    }
 
     return NextResponse.json({
       success: true,
@@ -152,6 +180,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const sessionId = searchParams.get('sessionId')
     const userId = searchParams.get('userId')
+    const countOnly = searchParams.get('count') === 'true'
 
     if (!sessionId) {
       return NextResponse.json(
@@ -178,19 +207,56 @@ export async function GET(request: NextRequest) {
     }
 
     // Get all attendance for a session
+    const limit = countOnly ? 0 : 100;
+    // Appwrite SDK expects 'number' for limit.
+    // Query.limit() requires the limit.
+    
+    // Note: Appwrite treats limit=0 as pagination metadata fetch?
+    // Actually limit=0 returns total but 0 documents.
+    // However, Appwrite node SDK requires limit >= 0.
+
+    // Using query builder properly
+    const queries = [
+        Query.equal('sessionId', sessionId),
+        Query.orderDesc('checkInTime')
+    ];
+    
+    // Using limit(1) if countOnly just to be safe and avoid fetching many docs, 
+    // but limit(0) is best for total if supported. Let's assume limit(0) works or use limit(1).
+    // Actually limit(0) is not supported in older Appwrite versions sometimes.
+    // But `countOnly` logic implies we return total.
+    // Let's use limit(1) and rely on .total property if limit(0) fails validation.
+    // But let's verify if I can just trust .total with limit(1). Yes.
+    
+    if (countOnly) {
+       // Just fetch 1 to get total efficiently? Or 0.
+       // Let's try 1 to be safe.
+       queries.push(Query.limit(1)); 
+    } else {
+       queries.push(Query.limit(100));
+    }
+
     const attendance = await serverDatabases.listDocuments(
       DATABASE_ID,
       ATTENDANCE_COLLECTION_ID,
-      [
-        Query.equal('sessionId', sessionId),
-        Query.orderDesc('checkInTime'),
-        Query.limit(100), // Reduced limit for performance with user fetching
-      ]
+      queries
     )
+
+    if (countOnly) {
+        return NextResponse.json({
+            total: attendance.total
+        });
+    }
 
     // Enrich attendance records with user details
     const enrichedAttendance = await Promise.all(
       attendance.documents.map(async (record: any) => {
+        // Preferred: Use snapshot data from record if available
+        if (record.userName && record.userEmail) {
+           return record;
+        }
+
+        // Fallback: Fetch user details from Users collection
         try {
           const user = await serverDatabases.getDocument(
             DATABASE_ID,

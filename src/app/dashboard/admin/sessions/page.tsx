@@ -25,6 +25,7 @@ export default function SessionsPage() {
   const [user, setUser] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [sessions, setSessions] = useState<any[]>([])
+  const [attendeeCounts, setAttendeeCounts] = useState<Record<string, number>>({})
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [selectedSession, setSelectedSession] = useState<any>(null)
   const [showLiveDashboard, setShowLiveDashboard] = useState(false)
@@ -99,6 +100,27 @@ export default function SessionsPage() {
 
     checkAuth()
   }, [router])
+
+  // Fetch attendee counts when sessions are loaded
+  useEffect(() => {
+    const fetchCounts = async () => {
+      const counts: Record<string, number> = {}
+      await Promise.all(sessions.map(async (session) => {
+        try {
+           const res = await fetch(`/api/attendance?sessionId=${session.$id}&count=true`)
+           if(res.ok) {
+             const data = await res.json()
+             counts[session.$id] = data.total || 0
+           }
+        } catch(e) { console.error('Error fetching count for session', session.$id, e) }
+      }))
+      setAttendeeCounts(counts)
+    }
+
+    if (sessions.length > 0) {
+        fetchCounts()
+    }
+  }, [sessions])
 
   const handleCreateSession = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -284,7 +306,7 @@ export default function SessionsPage() {
                             <Users className="w-4 h-4 text-gray-500" />
                             <div>
                               <p className="text-xs text-gray-500">Attendees</p>
-                              <p className="text-lg font-bold text-gray-900">-</p>
+                              <p className="text-lg font-bold text-gray-900">{attendeeCounts[session.$id] !== undefined ? attendeeCounts[session.$id] : '-'}</p>
                             </div>
                           </div>
                         </div>

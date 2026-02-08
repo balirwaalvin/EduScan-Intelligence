@@ -15,6 +15,7 @@ function AttendanceContent() {
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState('')
   const [sessionInfo, setSessionInfo] = useState<any>(null)
+  const [timeLeft, setTimeLeft] = useState('')
   const [formData, setFormData] = useState({
     userName: '',
     userEmail: '',
@@ -31,6 +32,14 @@ function AttendanceContent() {
     }
   }, [sessionId, organizationId])
 
+  useEffect(() => {
+    if (sessionInfo) {
+      const timer = setInterval(updateTimer, 1000)
+      updateTimer() // Initial call
+      return () => clearInterval(timer)
+    }
+  }, [sessionInfo])
+
   const fetchSessionInfo = async () => {
     try {
       const response = await fetch(`/api/sessions?sessionId=${sessionId}`)
@@ -41,6 +50,32 @@ function AttendanceContent() {
     } catch (err) {
       console.error('Error fetching session:', err)
     }
+  }
+
+  const updateTimer = () => {
+    if (!sessionInfo) return
+
+    const now = new Date().getTime()
+    const start = new Date(sessionInfo.startTime).getTime()
+    const end = new Date(sessionInfo.endTime).getTime()
+
+    if (now < start) {
+      const diff = start - now
+      setTimeLeft(`Starts in ${formatDuration(diff)}`)
+    } else if (now >= start && now <= end) {
+      const diff = end - now
+      setTimeLeft(`${formatDuration(diff)} remaining`)
+    } else {
+      setTimeLeft('Session Ended')
+    }
+  }
+
+  const formatDuration = (ms: number) => {
+    const totalSeconds = Math.floor(ms / 1000)
+    const hours = Math.floor(totalSeconds / 3600)
+    const minutes = Math.floor((totalSeconds % 3600) / 60)
+    const seconds = totalSeconds % 60
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -136,10 +171,19 @@ function AttendanceContent() {
         {sessionInfo && (
           <div className="bg-gradient-to-r from-primary-50 to-accent-50 rounded-xl p-4 mb-6 border border-primary-100">
             <h2 className="font-semibold text-gray-900 mb-2">{sessionInfo.name}</h2>
-            <div className="flex items-center text-sm text-gray-600 space-x-4">
-              <div className="flex items-center space-x-1">
-                <Clock className="w-4 h-4" />
+            <div className="flex flex-col space-y-2 mt-2">
+              <div className="flex items-center text-sm text-gray-600 space-x-2">
+                <Clock className="w-4 h-4 text-primary-600" />
                 <span>{new Date(sessionInfo.startTime).toLocaleString()}</span>
+              </div>
+              
+               {/* Timer */}
+              <div className="flex items-center space-x-2 bg-white/50 p-2 rounded-lg border border-primary-100/50 w-full sm:w-auto self-start">
+                 <div className={`w-2 h-2 rounded-full animate-pulse ${
+                    timeLeft === 'Session Ended' ? 'bg-red-500' : 
+                    timeLeft.includes('remaining') ? 'bg-green-500' : 'bg-blue-500'
+                 }`}></div>
+                 <span className="text-sm font-mono font-bold text-primary-700">{timeLeft}</span>
               </div>
             </div>
           </div>
