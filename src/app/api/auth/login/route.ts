@@ -1,10 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { serverDatabases, serverUsers } from '@/lib/appwrite-server'
 import { DATABASE_ID, COLLECTIONS } from '@/lib/appwrite'
-import { Query } from 'node-appwrite'
+import { Query, Client, Account } from 'node-appwrite'
 
 export async function POST(request: NextRequest) {
   try {
+    // Check for API key specifically to avoid hard crashes
+    if (!process.env.APPWRITE_API_KEY) {
+      console.error('SERVER ERROR: APPWRITE_API_KEY is not defined')
+      return NextResponse.json(
+        { error: 'Server configuration error: Missing API Key' },
+        { status: 500 }
+      )
+    }
+
     const body = await request.json()
     const { email, password } = body
 
@@ -41,9 +50,7 @@ export async function POST(request: NextRequest) {
       // Step 2: Verify password using Appwrite Users API (server-side)
       console.log('Verifying credentials with Appwrite...')
 
-      // Use serverUsers to verify the authentication
-      // This is a workaround: we'll create a temporary session and immediately delete it
-      const { Client, Account } = require('node-appwrite')
+      // Create a temporary client for password interaction
       const tempClient = new Client()
         .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
         .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID!)

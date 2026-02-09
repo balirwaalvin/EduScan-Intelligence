@@ -33,7 +33,13 @@ export default function LoginPage() {
         }),
       })
 
-      const data = await response.json()
+      let data;
+      try {
+        data = await response.json()
+      } catch (parseError) {
+        console.error('Failed to parse response:', parseError)
+        throw new Error('Server returned an invalid response. Please try again later.')
+      }
 
       if (!response.ok) {
         throw new Error(data.error || 'Login failed')
