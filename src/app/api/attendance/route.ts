@@ -137,6 +137,7 @@ export async function POST(request: NextRequest) {
 
     let attendance;
     try {
+        console.log('Attempting to create attendance with FULL payload...');
         attendance = await serverDatabases.createDocument(
           DATABASE_ID,
           ATTENDANCE_COLLECTION_ID,
@@ -144,22 +145,48 @@ export async function POST(request: NextRequest) {
           fullPayload
         )
     } catch (e: any) {
-        console.warn("Failed to create attendance with snapshot data, retrying with minimal...", e.message);
-        // Retry with minimal payload
-        attendance = await serverDatabases.createDocument(
-            DATABASE_ID,
-            ATTENDANCE_COLLECTION_ID,
-            ID.unique(),
-            {
-                sessionId,
-                userId,
-                organizationId,
-                status,
-                method: body.method || 'QR_CODE',
-                checkInTime: now.toISOString(),
-                createdAt: now.toISOString(),
-            }
-        )
+        console.warn("Full payload failed:", e.message);
+        
+        // Retry 2: Try with Name/Email but WITHOUT optional fields (studentId, department)
+        // This handles cases where studentId/department columns might represent in the schema
+        try {
+            console.log('Retrying with Name/Email only...');
+            attendance = await serverDatabases.createDocument(
+                DATABASE_ID,
+                ATTENDANCE_COLLECTION_ID,
+                ID.unique(),
+                {
+                    sessionId,
+                    userId,
+                    organizationId,
+                    status,
+                    method: body.method || 'QR_CODE',
+                    checkInTime: now.toISOString(),
+                    createdAt: now.toISOString(),
+                    userName,
+                    userEmail,
+                }
+            )
+        } catch (e2: any) {
+             console.warn("Name/Email payload failed:", e2.message);
+             
+             // Retry 3: Minimal payload (Last Resort)
+             console.log('Retrying with MINIMAL payload...');
+             attendance = await serverDatabases.createDocument(
+                DATABASE_ID,
+                ATTENDANCE_COLLECTION_ID,
+                ID.unique(),
+                {
+                    sessionId,
+                    userId,
+                    organizationId,
+                    status,
+                    method: body.method || 'QR_CODE',
+                    checkInTime: now.toISOString(),
+                    createdAt: now.toISOString(),
+                }
+            )
+        }
     }
 
     return NextResponse.json({
