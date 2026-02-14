@@ -1,7 +1,7 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { motion } from 'framer-motion'
+import { useState } from "react";
+import { motion } from "framer-motion";
 import {
   Building2,
   Mail,
@@ -10,60 +10,64 @@ import {
   CheckCircle2,
   ArrowLeft,
   Sparkles,
-} from 'lucide-react'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+} from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function TrialPage() {
-  const router = useRouter()
+  const router = useRouter();
   const [formData, setFormData] = useState({
-    organizationName: '',
-    organizationType: 'EDUCATIONAL',
-    email: '',
-    phone: '',
-    address: '',
-    adminFirstName: '',
-    adminLastName: '',
-    adminEmail: '',
-  })
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+    organizationName: "",
+    organizationType: "EDUCATIONAL",
+    email: "",
+    phone: "",
+    address: "",
+    adminFirstName: "",
+    adminLastName: "",
+    adminEmail: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setError('')
+    e.preventDefault();
+    setLoading(true);
+    setError("");
 
     try {
-      const response = await fetch('/api/trial/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/trial/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
-      })
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Registration failed')
+        throw new Error(data.error || "Registration failed");
       }
 
       // Redirect to success page
-      router.push(`/trial/success?email=${encodeURIComponent(formData.adminEmail)}`)
+      router.push(
+        `/trial/success?email=${encodeURIComponent(formData.adminEmail)}`,
+      );
     } catch (err: any) {
-      setError(err.message)
+      setError(err.message);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >,
   ) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
-    })
-  }
+    });
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -106,7 +110,9 @@ export default function TrialPage() {
             className="inline-flex items-center space-x-2 bg-primary-100 text-primary-700 px-4 py-2 rounded-full mb-6"
           >
             <Sparkles className="w-5 h-5" />
-            <span className="text-sm font-semibold">24-Day Free Trial • No Credit Card Required</span>
+            <span className="text-sm font-semibold">
+              24-Day Free Trial • No Credit Card Required
+            </span>
           </motion.div>
 
           <motion.h1
@@ -115,7 +121,10 @@ export default function TrialPage() {
             transition={{ delay: 0.1 }}
             className="text-4xl md:text-5xl font-bold text-gray-900 mb-4"
           >
-            Start Your <span className="bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">Free Trial</span>
+            Start Your{" "}
+            <span className="bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
+              Free Trial
+            </span>
           </motion.h1>
 
           <motion.p
@@ -137,9 +146,9 @@ export default function TrialPage() {
         >
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {[
-              'Full access to all features',
-              'No credit card required',
-              'Cancel anytime',
+              "Full access to all features",
+              "No credit card required",
+              "Cancel anytime",
             ].map((benefit) => (
               <div key={benefit} className="flex items-center space-x-2">
                 <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
@@ -166,7 +175,10 @@ export default function TrialPage() {
 
               <div className="space-y-4">
                 <div>
-                  <label htmlFor="organizationName" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label
+                    htmlFor="organizationName"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
                     Organization Name *
                   </label>
                   <input
@@ -177,12 +189,15 @@ export default function TrialPage() {
                     value={formData.organizationName}
                     onChange={handleChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                    placeholder="Springfield University"
+                    placeholder="EduScan University"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="organizationType" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label
+                    htmlFor="organizationType"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
                     Organization Type *
                   </label>
                   <select
@@ -200,7 +215,10 @@ export default function TrialPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label
+                      htmlFor="email"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
                       Organization Email *
                     </label>
                     <div className="relative">
@@ -219,7 +237,10 @@ export default function TrialPage() {
                   </div>
 
                   <div>
-                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label
+                      htmlFor="phone"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
                       Phone Number
                     </label>
                     <div className="relative">
@@ -231,14 +252,17 @@ export default function TrialPage() {
                         value={formData.phone}
                         onChange={handleChange}
                         className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                        placeholder="+1 (555) 000-0000"
+                        placeholder="+256 (720) 000-000"
                       />
                     </div>
                   </div>
                 </div>
 
                 <div>
-                  <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label
+                    htmlFor="address"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
                     Address
                   </label>
                   <div className="relative">
@@ -259,12 +283,17 @@ export default function TrialPage() {
 
             {/* Admin Details */}
             <div className="pt-6 border-t">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Admin Account Details</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                Admin Account Details
+              </h2>
 
               <div className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label htmlFor="adminFirstName" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label
+                      htmlFor="adminFirstName"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
                       First Name *
                     </label>
                     <input
@@ -275,12 +304,15 @@ export default function TrialPage() {
                       value={formData.adminFirstName}
                       onChange={handleChange}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                      placeholder="John"
+                      placeholder="Nakiiri"
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="adminLastName" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label
+                      htmlFor="adminLastName"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
                       Last Name *
                     </label>
                     <input
@@ -291,13 +323,16 @@ export default function TrialPage() {
                       value={formData.adminLastName}
                       onChange={handleChange}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                      placeholder="Doe"
+                      placeholder="Ashley"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label htmlFor="adminEmail" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label
+                    htmlFor="adminEmail"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
                     Admin Email *
                   </label>
                   <div className="relative">
@@ -331,22 +366,30 @@ export default function TrialPage() {
               disabled={loading}
               className="w-full bg-gradient-to-r from-primary-600 to-accent-600 text-white py-4 rounded-full text-lg font-semibold hover:shadow-xl transition transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
-              {loading ? 'Setting up your account...' : 'Start Your 24-Day Free Trial'}
+              {loading
+                ? "Setting up your account..."
+                : "Start Your 24-Day Free Trial"}
             </button>
 
             <p className="text-center text-sm text-gray-500">
-              By signing up, you agree to our{' '}
-              <a href="#" className="text-primary-600 hover:underline">
+              By signing up, you agree to our{" "}
+              <Link
+                href="/terms-of-service"
+                className="text-primary-600 hover:underline"
+              >
                 Terms of Service
-              </a>{' '}
-              and{' '}
-              <a href="#" className="text-primary-600 hover:underline">
+              </Link>{" "}
+              and{" "}
+              <Link
+                href="/privacy-policy"
+                className="text-primary-600 hover:underline"
+              >
                 Privacy Policy
-              </a>
+              </Link>
             </p>
           </form>
         </motion.div>
       </div>
     </div>
-  )
+  );
 }
