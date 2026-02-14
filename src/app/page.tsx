@@ -1289,22 +1289,22 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               {
-                name: "Dr. Sarah Johnson",
-                role: "Dean, Springfield University",
+                name: "Mr. Balirwa Moses",
+                role: "Assistant Dean FST, Cavendish University Uganda",
                 content:
                   "EduScan transformed our attendance tracking. The facial recognition is incredibly accurate and saves us hours every week.",
                 rating: 5,
               },
               {
-                name: "Michael Chen",
-                role: "IT Director, TechCorp Inc.",
+                name: "Md. Barbara Ofwono",
+                role: "Principal, Victorious Education Services",
                 content:
                   "The best attendance system we've used. The admin dashboard is intuitive and the 24-day trial convinced us immediately.",
                 rating: 5,
               },
               {
-                name: "Prof. Emily Rodriguez",
-                role: "Head of Department, Metro College",
+                name: "Miiro Joseph Luutu",
+                role: "Lecturer, Uganda Christian University",
                 content:
                   "Multiple tracking methods give us flexibility. Students love the QR code system, and we appreciate the detailed analytics.",
                 rating: 5,
