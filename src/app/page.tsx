@@ -475,41 +475,16 @@ export default function LandingPage() {
                 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-32 bg-gradient-to-r from-purple-200 via-pink-200 to-blue-200 rounded-full blur-3xl -z-10"
               />
 
-              <motion.p
-                animate={{ y: [0, -8, 0] }}
-                transition={{
-                  duration: 5,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-                className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed relative"
-              >
-                <motion.span
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.6, delay: 1.0 }}
-                >
-                  Automate attendance tracking with{" "}
-                </motion.span>
-                <motion.span
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.6, delay: 1.1 }}
-                  className="text-primary-600 font-bold"
-                >
+              <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed relative">
+                Automate attendance tracking with{" "}
+                <span className="text-primary-600 font-bold">
                   AI-powered facial recognition, QR codes, and RFID technology
-                </motion.span>
-                <motion.span
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.6, delay: 1.2 }}
-                >
-                  . Reduce time spent by{" "}
-                  <span className="text-accent-600 font-bold">85%</span> while
-                  increasing accuracy to{" "}
-                  <span className="text-green-600 font-bold">99.9%</span>.
-                </motion.span>
-              </motion.p>
+                </span>
+                . Reduce time spent by{" "}
+                <span className="text-accent-600 font-bold">85%</span> while
+                increasing accuracy to{" "}
+                <span className="text-green-600 font-bold">99.9%</span>.
+              </p>
             </motion.div>
 
             {/* Live Analytics Stats Bar */}
