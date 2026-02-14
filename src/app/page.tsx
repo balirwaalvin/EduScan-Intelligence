@@ -22,6 +22,8 @@ import {
   TrendingUp,
   Menu,
   X,
+  Mic,
+  Fingerprint,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -478,7 +480,8 @@ export default function LandingPage() {
               <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed relative">
                 Automate attendance tracking with{" "}
                 <span className="text-primary-600 font-bold">
-                  AI-powered facial recognition, QR codes, and RFID technology
+                  AI-powered facial recognition, QR codes, RFID, voice-over, and
+                  biometric technology
                 </span>
                 . Reduce time spent by{" "}
                 <span className="text-accent-600 font-bold">85%</span> while
@@ -783,7 +786,7 @@ export default function LandingPage() {
               />
 
               <div className="bg-white rounded-2xl p-8 relative z-10">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
                   {[
                     {
                       icon: QrCode,
@@ -803,6 +806,18 @@ export default function LandingPage() {
                       title: "Face Recognition",
                       color: "from-orange-500 to-red-500",
                       description: "AI-powered biometric authentication",
+                    },
+                    {
+                      icon: Mic,
+                      title: "Voice Over",
+                      color: "from-teal-500 to-green-500",
+                      description: "Voice-activated attendance capture",
+                    },
+                    {
+                      icon: Fingerprint,
+                      title: "Biometric",
+                      color: "from-amber-500 to-yellow-500",
+                      description: "Fingerprint-based identity verification",
                     },
                   ].map((tech, index) => (
                     <motion.div
