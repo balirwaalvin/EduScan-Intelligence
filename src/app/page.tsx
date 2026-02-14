@@ -1156,8 +1156,8 @@ export default function LandingPage() {
             {[
               {
                 name: "Starter",
-                price: "$49",
-                period: "/month",
+                price: "UGX 500,000",
+                period: "/term",
                 description: "Perfect for small institutions",
                 features: [
                   "Up to 100 users",
@@ -1170,8 +1170,8 @@ export default function LandingPage() {
               },
               {
                 name: "Professional",
-                price: "$149",
-                period: "/month",
+                price: "UGX 1,500,000",
+                period: "/term",
                 description: "For growing organizations",
                 features: [
                   "Up to 500 users",
