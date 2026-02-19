@@ -45,7 +45,7 @@
 
 ## Slide 3: Market Opportunity
 
-### **A $5 Billion+ Global Market**
+### **A $5-8 Billion Global Market**
 
 **Educational Sector:**
 - **195 million** students in higher education globally
