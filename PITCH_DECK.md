@@ -45,7 +45,7 @@
 
 ## Slide 3: Market Opportunity
 
-### **A $5-8 Billion Global Market**
+### **An $8 Billion Global Market**
 
 **Educational Sector:**
 - **195 million** students in higher education globally
@@ -708,7 +708,7 @@
 - CAGR: 16.3%
 
 **Attendance Management Subset:**
-- Estimated $5-8 billion globally
+- Estimated $8 billion globally
 - Growing at 18% CAGR
 - Highly fragmented (no dominant player)
 

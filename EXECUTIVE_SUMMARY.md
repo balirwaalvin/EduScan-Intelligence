@@ -49,7 +49,7 @@ Hands-free biometric verification with liveness detection
 
 ### Target Market Size
 - **Global EdTech Market:** $254B (2024) → $605B (2027)
-- **Attendance Management Subset:** $5-8B globally
+- **Attendance Management Subset:** $8B globally
 - **Growth Rate:** 16-18% CAGR
 
 ### Target Customers

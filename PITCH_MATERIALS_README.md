@@ -103,7 +103,7 @@ This package contains **4 comprehensive documents** with professional pitch cont
 6. **Closing** (Slides 18-20)
    - Social Impact, Testimonials, Call to Action
 
-**Length:** ~20,000 words of content
+**Length:** ~3,000 words of content
 
 ---
 
