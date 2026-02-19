@@ -425,7 +425,7 @@ Manual attendance wastes time, lacks security, and provides no insights.
 Triple-technology platform with AI-powered analytics, saving 87% of time spent on attendance.
 
 **Market:**
-$5-8B global market growing at 18% CAGR.
+$8B global market growing at 18% CAGR.
 
 **Traction:**
 MVP operational, 94% satisfaction in pilots, 50+ institutions interested.
