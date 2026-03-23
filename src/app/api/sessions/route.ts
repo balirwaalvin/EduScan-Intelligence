@@ -1,12 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sessionService } from '@/lib/services/session.service';
 
+const getAuthUserFromCookie = (request: NextRequest) => {
+  const authCookie = request.cookies.get('auth_user');
+  if (!authCookie?.value) return null;
+
+  try {
+    return JSON.parse(authCookie.value);
+  } catch {
+    return null;
+  }
+};
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
+    const sessionId = searchParams.get('sessionId');
     const organizationId = searchParams.get('organizationId');
     const isActive = searchParams.get('isActive');
     const action = searchParams.get('action');
+
+    if (sessionId) {
+      const result = await sessionService.getSessionById(sessionId);
+      if (!result.success) {
+        return NextResponse.json({ error: result.error }, { status: 404 });
+      }
+      return NextResponse.json({ session: result.session });
+    }
 
     // Get today's sessions
     if (action === 'today' && organizationId) {
@@ -53,10 +73,28 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json();
-    const { sessionId, ...updates } = body;
+    const { sessionId, action, ...updates } = body;
 
     if (!sessionId) {
       return NextResponse.json({ error: 'Session ID is required' }, { status: 400 });
+    }
+
+    if (action === 'end') {
+      const authUser = getAuthUserFromCookie(request);
+      if (!authUser || authUser.role !== 'ADMIN') {
+        return NextResponse.json({ error: 'Unauthorized. Admin access required.' }, { status: 403 });
+      }
+
+      const result = await sessionService.updateSession(sessionId, {
+        endTime: new Date().toISOString(),
+        status: 'ENDED',
+      });
+
+      if (!result.success) {
+        return NextResponse.json({ error: result.error }, { status: 400 });
+      }
+
+      return NextResponse.json({ session: result.session });
     }
 
     const result = await sessionService.updateSession(sessionId, updates);

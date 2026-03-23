@@ -8,14 +8,19 @@ interface LiveAttendanceDashboardProps {
   sessionId: string
   sessionName: string
   onClose: () => void
+  onSessionUpdated?: () => Promise<void> | void
 }
 
-export default function LiveAttendanceDashboard({ sessionId, sessionName, onClose }: LiveAttendanceDashboardProps) {
+export default function LiveAttendanceDashboard({ sessionId, sessionName, onClose, onSessionUpdated }: LiveAttendanceDashboardProps) {
   const [attendance, setAttendance] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [autoRefresh, setAutoRefresh] = useState(true)
   const [sessionDetails, setSessionDetails] = useState<any>(null)
   const [timeLeft, setTimeLeft] = useState<string>('')
+  const [endingSession, setEndingSession] = useState(false)
+  const [removingAttendanceIds, setRemovingAttendanceIds] = useState<string[]>([])
+  const [actionError, setActionError] = useState('')
+  const [actionSuccess, setActionSuccess] = useState('')
 
   useEffect(() => {
     fetchSessionDetails()
@@ -46,6 +51,75 @@ export default function LiveAttendanceDashboard({ sessionId, sessionName, onClos
       }
     } catch (error) {
       console.error('Error fetching session details:', error)
+    }
+  }
+
+  const handleEndSession = async () => {
+    if (!confirm('End this session now? Students will no longer be able to mark attendance.')) {
+      return
+    }
+
+    setEndingSession(true)
+    setActionError('')
+    setActionSuccess('')
+
+    try {
+      const response = await fetch('/api/sessions', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sessionId, action: 'end' }),
+      })
+
+      const data = await response.json()
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to end session')
+      }
+
+      setSessionDetails(data.session)
+      setActionSuccess('Session ended successfully.')
+      await fetchAttendance()
+      if (onSessionUpdated) {
+        await onSessionUpdated()
+      }
+    } catch (error: any) {
+      setActionError(error.message || 'Failed to end session')
+    } finally {
+      setEndingSession(false)
+    }
+  }
+
+  const handleUncheckAttendance = async (record: any, checked: boolean) => {
+    if (checked) return
+
+    if (!confirm(`Remove attendance for ${record.userName || 'this student'}?`)) {
+      return
+    }
+
+    setActionError('')
+    setActionSuccess('')
+    setRemovingAttendanceIds((prev) => [...prev, record.$id])
+
+    try {
+      const response = await fetch('/api/attendance', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ attendanceId: record.$id, sessionId }),
+      })
+
+      const data = await response.json()
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to remove attendance')
+      }
+
+      setAttendance((prev) => prev.filter((item) => item.$id !== record.$id))
+      setActionSuccess(`Attendance removed for ${record.userName || 'student'}.`)
+      if (onSessionUpdated) {
+        await onSessionUpdated()
+      }
+    } catch (error: any) {
+      setActionError(error.message || 'Failed to remove attendance')
+    } finally {
+      setRemovingAttendanceIds((prev) => prev.filter((id) => id !== record.$id))
     }
   }
 
@@ -127,6 +201,15 @@ export default function LiveAttendanceDashboard({ sessionId, sessionName, onClos
               <p className="text-white/90">{sessionName}</p>
             </div>
             <div className="flex items-center space-x-3">
+              <button
+                onClick={handleEndSession}
+                disabled={endingSession || timeLeft === 'Session Ended'}
+                className="px-4 py-2 rounded-lg border border-white/30 bg-white/15 hover:bg-white/25 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                title="End this session now"
+              >
+                {endingSession ? 'Ending...' : timeLeft === 'Session Ended' ? 'Session Ended' : 'End Session'}
+              </button>
+
               {/* Timer Display */}
               <div className="bg-white/20 backdrop-blur-md px-4 py-2 rounded-lg flex items-center space-x-2 border border-white/10">
                 <Timer className="w-5 h-5 animate-pulse" />
@@ -195,6 +278,21 @@ export default function LiveAttendanceDashboard({ sessionId, sessionName, onClos
 
         {/* Attendance List */}
         <div className="flex-1 overflow-y-auto p-6">
+          {(actionError || actionSuccess) && (
+            <div className="mb-4 space-y-2">
+              {actionError && (
+                <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-700">
+                  {actionError}
+                </div>
+              )}
+              {actionSuccess && (
+                <div className="rounded-lg border border-green-200 bg-green-50 px-4 py-2 text-sm text-green-700">
+                  {actionSuccess}
+                </div>
+              )}
+            </div>
+          )}
+
           {loading ? (
             <div className="flex items-center justify-center py-12">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
@@ -232,6 +330,18 @@ export default function LiveAttendanceDashboard({ sessionId, sessionName, onClos
                       </div>
 
                       <div className="flex items-center space-x-3">
+                        <label className="flex items-center space-x-2 text-sm text-gray-600">
+                          <input
+                            type="checkbox"
+                            checked
+                            onChange={(e) => handleUncheckAttendance(record, e.target.checked)}
+                            disabled={removingAttendanceIds.includes(record.$id)}
+                            className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500 disabled:opacity-50"
+                            title="Uncheck to remove this attendance"
+                          />
+                          <span>{removingAttendanceIds.includes(record.$id) ? 'Removing...' : 'Present'}</span>
+                        </label>
+
                         <div className="text-right text-sm text-gray-500">
                           <div className="flex items-center space-x-1">
                             <Clock className="w-4 h-4" />

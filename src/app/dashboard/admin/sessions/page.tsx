@@ -448,6 +448,11 @@ export default function SessionsPage() {
           <LiveAttendanceDashboard
             sessionId={selectedSession.$id}
             sessionName={selectedSession.name}
+            onSessionUpdated={async () => {
+              if (user?.id) {
+                await fetchSessions(user.id)
+              }
+            }}
             onClose={() => {
               setShowLiveDashboard(false)
               setSelectedSession(null)

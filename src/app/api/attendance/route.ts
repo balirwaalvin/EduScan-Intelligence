@@ -5,6 +5,17 @@ import { Query, ID } from 'node-appwrite'
 
 const ATTENDANCE_COLLECTION_ID = process.env.NEXT_PUBLIC_APPWRITE_ATTENDANCE_COLLECTION_ID || 'attendance'
 
+const getAuthUserFromCookie = (request: NextRequest) => {
+  const authCookie = request.cookies.get('auth_user')
+  if (!authCookie?.value) return null
+
+  try {
+    return JSON.parse(authCookie.value)
+  } catch {
+    return null
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
@@ -236,15 +247,6 @@ export async function GET(request: NextRequest) {
     }
 
     // Get all attendance for a session
-    const limit = countOnly ? 0 : 100;
-    // Appwrite SDK expects 'number' for limit.
-    // Query.limit() requires the limit.
-    
-    // Note: Appwrite treats limit=0 as pagination metadata fetch?
-    // Actually limit=0 returns total but 0 documents.
-    // However, Appwrite node SDK requires limit >= 0.
-
-    // Using query builder properly
     const queries = [
         Query.equal('sessionId', sessionId),
         Query.orderDesc('checkInTime')
@@ -312,6 +314,55 @@ export async function GET(request: NextRequest) {
     console.error('Error fetching attendance:', error)
     return NextResponse.json(
       { error: error.message || 'Failed to fetch attendance' },
+      { status: 500 }
+    )
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const authUser = getAuthUserFromCookie(request)
+    if (!authUser || authUser.role !== 'ADMIN') {
+      return NextResponse.json(
+        { error: 'Unauthorized. Admin access required.' },
+        { status: 403 }
+      )
+    }
+
+    const body = await request.json()
+    const { attendanceId, sessionId } = body
+
+    if (!attendanceId) {
+      return NextResponse.json(
+        { error: 'Attendance ID is required' },
+        { status: 400 }
+      )
+    }
+
+    const existingRecord = await serverDatabases.getDocument(
+      DATABASE_ID,
+      ATTENDANCE_COLLECTION_ID,
+      attendanceId
+    )
+
+    if (sessionId && existingRecord.sessionId !== sessionId) {
+      return NextResponse.json(
+        { error: 'Attendance record does not belong to this session' },
+        { status: 400 }
+      )
+    }
+
+    await serverDatabases.deleteDocument(
+      DATABASE_ID,
+      ATTENDANCE_COLLECTION_ID,
+      attendanceId
+    )
+
+    return NextResponse.json({ success: true })
+  } catch (error: any) {
+    console.error('Error deleting attendance:', error)
+    return NextResponse.json(
+      { error: error.message || 'Failed to delete attendance' },
       { status: 500 }
     )
   }
