@@ -95,6 +95,17 @@ export default function LiveAttendanceDashboard({ sessionId, sessionName, onClos
       return
     }
 
+    const enteredReason = window.prompt(
+      `Reason for removing ${record.userName || 'this student'}'s attendance:`,
+      'Counterfeit/proxy scan suspected'
+    )
+
+    if (enteredReason === null) {
+      return
+    }
+
+    const removalReason = enteredReason.trim() || 'Counterfeit/proxy scan suspected'
+
     setActionError('')
     setActionSuccess('')
     setRemovingAttendanceIds((prev) => [...prev, record.$id])
@@ -103,7 +114,7 @@ export default function LiveAttendanceDashboard({ sessionId, sessionName, onClos
       const response = await fetch('/api/attendance', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ attendanceId: record.$id, sessionId }),
+        body: JSON.stringify({ attendanceId: record.$id, sessionId, reason: removalReason }),
       })
 
       const data = await response.json()

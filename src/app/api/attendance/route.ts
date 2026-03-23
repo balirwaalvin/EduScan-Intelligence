@@ -4,6 +4,7 @@ import { DATABASE_ID, COLLECTIONS } from '@/lib/appwrite'
 import { Query, ID } from 'node-appwrite'
 
 const ATTENDANCE_COLLECTION_ID = process.env.NEXT_PUBLIC_APPWRITE_ATTENDANCE_COLLECTION_ID || 'attendance'
+const ATTENDANCE_AUDIT_COLLECTION_ID = process.env.NEXT_PUBLIC_APPWRITE_ATTENDANCE_AUDIT_COLLECTION_ID || ''
 
 const getAuthUserFromCookie = (request: NextRequest) => {
   const authCookie = request.cookies.get('auth_user')
@@ -330,12 +331,19 @@ export async function DELETE(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { attendanceId, sessionId } = body
+    const { attendanceId, sessionId, reason } = body
 
     if (!attendanceId) {
       return NextResponse.json(
         { error: 'Attendance ID is required' },
         { status: 400 }
+      )
+    }
+
+    if (!ATTENDANCE_AUDIT_COLLECTION_ID) {
+      return NextResponse.json(
+        { error: 'Attendance audit collection is not configured. Set NEXT_PUBLIC_APPWRITE_ATTENDANCE_AUDIT_COLLECTION_ID.' },
+        { status: 500 }
       )
     }
 
@@ -352,13 +360,63 @@ export async function DELETE(request: NextRequest) {
       )
     }
 
+    const removalReason = typeof reason === 'string' && reason.trim().length > 0
+      ? reason.trim()
+      : 'Counterfeit/proxy scan suspected'
+
+    const auditTimestamp = new Date().toISOString()
+
+    // Persist audit trail before deleting attendance so removals are reversible and traceable.
+    try {
+      await serverDatabases.createDocument(
+        DATABASE_ID,
+        ATTENDANCE_AUDIT_COLLECTION_ID,
+        ID.unique(),
+        {
+          attendanceId,
+          sessionId: existingRecord.sessionId || '',
+          userId: existingRecord.userId || '',
+          organizationId: existingRecord.organizationId || '',
+          removedByAdminId: authUser.id || '',
+          removedByAdminRole: authUser.role || 'ADMIN',
+          removedAt: auditTimestamp,
+          reason: removalReason,
+          originalRecord: JSON.stringify(existingRecord),
+        }
+      )
+    } catch (auditError: any) {
+      console.warn('Full audit payload failed, retrying with minimal payload:', auditError?.message)
+
+      try {
+        await serverDatabases.createDocument(
+          DATABASE_ID,
+          ATTENDANCE_AUDIT_COLLECTION_ID,
+          ID.unique(),
+          {
+            attendanceId,
+            sessionId: existingRecord.sessionId || '',
+            userId: existingRecord.userId || '',
+            removedByAdminId: authUser.id || '',
+            removedAt: auditTimestamp,
+            reason: removalReason,
+          }
+        )
+      } catch (minimalAuditError: any) {
+        console.error('Audit trail creation failed:', minimalAuditError)
+        return NextResponse.json(
+          { error: minimalAuditError?.message || 'Failed to write attendance audit trail. Attendance was not removed.' },
+          { status: 500 }
+        )
+      }
+    }
+
     await serverDatabases.deleteDocument(
       DATABASE_ID,
       ATTENDANCE_COLLECTION_ID,
       attendanceId
     )
 
-    return NextResponse.json({ success: true })
+    return NextResponse.json({ success: true, audited: true })
   } catch (error: any) {
     console.error('Error deleting attendance:', error)
     return NextResponse.json(
