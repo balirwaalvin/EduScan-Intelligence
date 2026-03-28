@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Users, Clock, TrendingUp, CheckCircle, AlertCircle, X, RefreshCw, Timer } from 'lucide-react'
+import { Users, Clock, TrendingUp, CheckCircle, AlertCircle, X, RefreshCw, Timer, Download } from 'lucide-react'
+import * as XLSX from 'xlsx'
 
 interface LiveAttendanceDashboardProps {
   sessionId: string
@@ -196,6 +197,31 @@ export default function LiveAttendanceDashboard({ sessionId, sessionName, onClos
     })
   }
 
+  const handleExportExcel = () => {
+    if (attendance.length === 0) {
+      alert('No attendance data to export.')
+      return
+    }
+
+    const exportData = attendance.map(record => ({
+      'Student Name': record.userName || 'Unknown User',
+      'Email Address': record.userEmail || 'No Email',
+      'Student ID': record.studentId || 'N/A',
+      'Department': record.department || 'N/A',
+      'Status': record.status,
+      'Time Marked': formatTime(record.checkInTime || record.markedAt)
+    }))
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData)
+    const workbook = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Attendance')
+
+    const dateStr = new Date().toISOString().split('T')[0]
+    const safeSessionName = sessionName.replace(/[^a-z0-9]/gi, '_').toLowerCase()
+    
+    XLSX.writeFile(workbook, `${safeSessionName}_attendance_${dateStr}.xlsx`)
+  }
+
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 overflow-y-auto">
       <motion.div
@@ -228,6 +254,15 @@ export default function LiveAttendanceDashboard({ sessionId, sessionName, onClos
               </div>
               
               <div className="h-8 w-px bg-white/20 mx-2"></div>
+
+              <button
+                onClick={handleExportExcel}
+                className="px-4 py-2 rounded-lg border border-white/30 bg-white/15 hover:bg-white/25 transition flex items-center space-x-2"
+                title="Export Attendance to Excel"
+              >
+                <Download className="w-5 h-5" />
+                <span className="hidden sm:inline">Export</span>
+              </button>
 
               <button
                 onClick={() => setAutoRefresh(!autoRefresh)}
