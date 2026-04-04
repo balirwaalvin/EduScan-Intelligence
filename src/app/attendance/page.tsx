@@ -212,7 +212,7 @@ function AttendanceContent() {
               required
               value={formData.userName}
               onChange={(e) => setFormData({ ...formData, userName: e.target.value })}
-              placeholder="John Doe"
+              placeholder="Nalweyiso Samalie Ruth"
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition"
             />
           </div>
@@ -226,7 +226,7 @@ function AttendanceContent() {
               required
               value={formData.userEmail}
               onChange={(e) => setFormData({ ...formData, userEmail: e.target.value })}
-              placeholder="john.doe@example.com"
+              placeholder="nalweyiso.samalie.ruth@example.com"
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition"
             />
           </div>
