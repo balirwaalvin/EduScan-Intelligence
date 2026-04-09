@@ -15,6 +15,7 @@ import {
   Bell,
   Building2,
   BookOpen,
+  GraduationCap,
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react'
@@ -66,6 +67,7 @@ export default function DashboardLayout({ children, role, user }: DashboardLayou
         ...baseItems,
         { name: 'Users', href: '/dashboard/admin/users', icon: Users },
         { name: 'Departments', href: '/dashboard/admin/departments', icon: Building2 },
+        { name: 'Programs', href: '/dashboard/admin/programs', icon: GraduationCap },
         { name: 'Courses', href: '/dashboard/admin/courses', icon: BookOpen },
         { name: 'Sessions', href: '/dashboard/admin/sessions', icon: Calendar },
         { name: 'Analytics', href: '/dashboard/admin/analytics', icon: BarChart3 },
