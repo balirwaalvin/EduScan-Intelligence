@@ -1,90 +1,209 @@
 'use client'
 
-import { useEffect } from 'react'
-import { motion, useMotionValue, useSpring } from 'framer-motion'
+import { useEffect, useRef, useState } from 'react'
+import { motion, useMotionValue, useSpring, AnimatePresence } from 'framer-motion'
+
+interface Ripple {
+  id: number
+  x: number
+  y: number
+}
 
 export default function LiquidCursor() {
-  const mouseX = useMotionValue(0)
-  const mouseY = useMotionValue(0)
+  const dotRef = useRef<HTMLDivElement>(null)
 
-  // Spring configurations for different layers to create the "drag" effect
-  const springConfig1 = { damping: 25, stiffness: 700 }
-  const springConfig2 = { damping: 35, stiffness: 500 }
-  const springConfig3 = { damping: 45, stiffness: 300 }
-  const springConfig4 = { damping: 55, stiffness: 200 }
+  // 2 springs total (vs 8 in previous version — 4 springs × 2 axes)
+  const mouseX = useMotionValue(-300)
+  const mouseY = useMotionValue(-300)
+  const ringX = useSpring(mouseX, { damping: 22, stiffness: 320, mass: 0.6 })
+  const ringY = useSpring(mouseY, { damping: 22, stiffness: 320, mass: 0.6 })
 
-  const x1 = useSpring(mouseX, springConfig1)
-  const y1 = useSpring(mouseY, springConfig1)
-
-  const x2 = useSpring(mouseX, springConfig2)
-  const y2 = useSpring(mouseY, springConfig2)
-
-  const x3 = useSpring(mouseX, springConfig3)
-  const y3 = useSpring(mouseY, springConfig3)
-
-  const x4 = useSpring(mouseX, springConfig4)
-  const y4 = useSpring(mouseY, springConfig4)
+  const [isHovering, setIsHovering] = useState(false)
+  const [isClicking, setIsClicking] = useState(false)
+  const [ripples, setRipples] = useState<Ripple[]>([])
+  const [visible, setVisible] = useState(false)
 
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
+    // Only activate on fine-pointer devices (not touchscreens)
+    if (!window.matchMedia('(pointer: fine)').matches) return
+
+    setVisible(true)
+
+    // Inject a global style to hide the native cursor everywhere
+    const style = document.createElement('style')
+    style.id = 'aurora-cursor-hide'
+    style.textContent = '*, *::before, *::after { cursor: none !important; }'
+    document.head.appendChild(style)
+
+    const onMove = (e: MouseEvent) => {
+      // Dot uses direct DOM — absolutely zero React overhead, zero lag
+      if (dotRef.current) {
+        dotRef.current.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`
+      }
       mouseX.set(e.clientX)
       mouseY.set(e.clientY)
     }
 
-    window.addEventListener('mousemove', handleMouseMove)
-    return () => window.removeEventListener('mousemove', handleMouseMove)
+    const onOver = (e: MouseEvent) => {
+      if ((e.target as HTMLElement).closest('a, button, [role="button"], input, select, textarea, label')) {
+        setIsHovering(true)
+      }
+    }
+
+    const onOut = (e: MouseEvent) => {
+      if ((e.target as HTMLElement).closest('a, button, [role="button"], input, select, textarea, label')) {
+        setIsHovering(false)
+      }
+    }
+
+    const onDown = (e: MouseEvent) => {
+      setIsClicking(true)
+      const id = performance.now()
+      setRipples(prev => [...prev, { id, x: e.clientX, y: e.clientY }])
+      setTimeout(() => setRipples(prev => prev.filter(r => r.id !== id)), 700)
+    }
+
+    const onUp = () => setIsClicking(false)
+
+    window.addEventListener('mousemove', onMove, { passive: true })
+    document.addEventListener('mouseover', onOver)
+    document.addEventListener('mouseout', onOut)
+    window.addEventListener('mousedown', onDown)
+    window.addEventListener('mouseup', onUp)
+
+    return () => {
+      document.getElementById('aurora-cursor-hide')?.remove()
+      window.removeEventListener('mousemove', onMove)
+      document.removeEventListener('mouseover', onOver)
+      document.removeEventListener('mouseout', onOut)
+      window.removeEventListener('mousedown', onDown)
+      window.removeEventListener('mouseup', onUp)
+    }
   }, [mouseX, mouseY])
 
-  // Helper for duplicate styles
-  const blobStyle = "absolute top-0 left-0 w-24 h-24 rounded-full -translate-x-1/2 -translate-y-1/2 opacity-60 mix-blend-screen"
+  if (!visible) return null
+
+  const ringSize = isClicking ? 20 : isHovering ? 60 : 40
+  const haloSize = isHovering ? 110 : 72
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden">
-      {/* SVG Filter for the Gooey Effect */}
-      <svg className="hidden">
-        <defs>
-          <filter id="goo">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
-            <feColorMatrix
-              in="blur"
-              mode="matrix"
-              values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7"
-              result="goo"
-            />
-            <feBlend in="SourceGraphic" in2="goo" />
-          </filter>
-        </defs>
-      </svg>
+    <div className="fixed inset-0 pointer-events-none z-[9990]" aria-hidden="true">
 
-      {/* The Liquid/Gooey Container */}
+      {/* ── 1. PRECISION DOT ─────────────────────────────────────────────────
+          Direct DOM update on every mousemove — no spring, no lag.
+          Feels like a laser pointer. */}
       <div
-        style={{ filter: 'url(#goo)' }}
-        className="w-full h-full relative"
+        ref={dotRef}
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: 7,
+          height: 7,
+          borderRadius: '50%',
+          background: '#ffffff',
+          boxShadow:
+            '0 0 0 1.5px rgba(56,189,248,0.5), 0 0 10px 2px rgba(56,189,248,0.55)',
+          willChange: 'transform',
+          zIndex: 9999,
+        }}
+      />
+
+      {/* ── 2. SPINNING AURORA RING ──────────────────────────────────────────
+          Conic gradient masked into a ring so it looks like a coloured border.
+          Rotation is driven by a plain CSS animation (no framer jitter on
+          size-change re-renders). Position follows the shared spring. */}
+      <motion.div
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          x: ringX,
+          y: ringY,
+          translateX: '-50%',
+          translateY: '-50%',
+          willChange: 'transform',
+          zIndex: 9997,
+        }}
+        animate={{
+          width: ringSize,
+          height: ringSize,
+          opacity: isHovering ? 1 : 0.55,
+        }}
+        transition={{
+          width: { type: 'spring', stiffness: 380, damping: 26 },
+          height: { type: 'spring', stiffness: 380, damping: 26 },
+          opacity: { duration: 0.18 },
+        }}
       >
-        {/* Layer 1: Core (Brightest) */}
-        <motion.div
-          style={{ x: x1, y: y1 }}
-          className={`${blobStyle} bg-primary-400 w-16 h-16`}
+        <div
+          className="aurora-ring-spin"
+          style={{
+            width: '100%',
+            height: '100%',
+            borderRadius: '50%',
+            background:
+              'conic-gradient(from 0deg, #38bdf8, #818cf8, #e879f9, #fb923c, #facc15, #34d399, #38bdf8)',
+            WebkitMask:
+              'radial-gradient(farthest-side, transparent calc(100% - 2.5px), black calc(100% - 2.5px))',
+            mask: 'radial-gradient(farthest-side, transparent calc(100% - 2.5px), black calc(100% - 2.5px))',
+          }}
         />
+      </motion.div>
 
-        {/* Layer 2: Fast Follower */}
-        <motion.div
-          style={{ x: x2, y: y2 }}
-          className={`${blobStyle} bg-accent-400 w-20 h-20 opacity-50`}
-        />
+      {/* ── 3. AMBIENT GLOW HALO ─────────────────────────────────────────────
+          Soft radial gradient orb behind the ring. Breathes on hover. */}
+      <motion.div
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          x: ringX,
+          y: ringY,
+          translateX: '-50%',
+          translateY: '-50%',
+          borderRadius: '50%',
+          background:
+            'radial-gradient(circle, rgba(56,189,248,0.18) 0%, rgba(168,85,247,0.10) 50%, transparent 78%)',
+          willChange: 'transform',
+          zIndex: 9996,
+        }}
+        animate={{
+          width: haloSize,
+          height: haloSize,
+          opacity: isClicking ? 0.25 : 0.85,
+        }}
+        transition={{
+          width: { type: 'spring', stiffness: 200, damping: 22 },
+          height: { type: 'spring', stiffness: 200, damping: 22 },
+          opacity: { duration: 0.15 },
+        }}
+      />
 
-        {/* Layer 3: Slow Follower */}
-        <motion.div
-          style={{ x: x3, y: y3 }}
-          className={`${blobStyle} bg-purple-400 w-24 h-24 opacity-40`}
-        />
+      {/* ── 4. CLICK RIPPLES ─────────────────────────────────────────────────
+          Each click spawns a ring that expands and fades out. */}
+      <AnimatePresence>
+        {ripples.map(r => (
+          <motion.div
+            key={r.id}
+            style={{
+              position: 'fixed',
+              top: r.y,
+              left: r.x,
+              translateX: '-50%',
+              translateY: '-50%',
+              borderRadius: '50%',
+              border: '1.5px solid rgba(56,189,248,0.65)',
+              zIndex: 9994,
+            }}
+            initial={{ width: 8, height: 8, opacity: 0.9 }}
+            animate={{ width: 88, height: 88, opacity: 0 }}
+            exit={{}}
+            transition={{ duration: 0.6, ease: [0.15, 0.85, 0.4, 1] }}
+          />
+        ))}
+      </AnimatePresence>
 
-        {/* Layer 4: Drag Tail (Largest) */}
-        <motion.div
-          style={{ x: x4, y: y4 }}
-          className={`${blobStyle} bg-indigo-400 w-28 h-28 opacity-30`}
-        />
-      </div>
     </div>
   )
 }

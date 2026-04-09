@@ -331,3 +331,13 @@ body {
   background-color: rgba(14, 165, 233, 0.3);
   color: inherit;
 }
+
+/* Aurora cursor ring spin */
+@keyframes aurora-ring-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.aurora-ring-spin {
+  animation: aurora-ring-spin 3s linear infinite;
+}

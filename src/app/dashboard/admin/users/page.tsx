@@ -27,6 +27,9 @@ export default function UsersPage() {
   const [filteredUsers, setFilteredUsers] = useState<any[]>([])
   const [searchQuery, setSearchQuery] = useState('')
   const [roleFilter, setRoleFilter] = useState('ALL')
+  const [departments, setDepartments] = useState<any[]>([])
+  const [programs, setPrograms] = useState<any[]>([])
+  const [courses, setCourses] = useState<any[]>([])
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
   const [selectedUser, setSelectedUser] = useState<any>(null)
@@ -36,10 +39,28 @@ export default function UsersPage() {
     lastName: '',
     role: 'STUDENT',
     phone: '',
+    departmentId: '',
+    programId: '',
+    registeredCourses: [] as string[],
   })
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+
+  const fetchDataSetup = async (organizationId: string) => {
+    try {
+      const [deptRes, progRes, courseRes] = await Promise.all([
+        fetch(`/api/departments?organizationId=${organizationId}`).then((r) => r.json()),
+        fetch(`/api/programs?organizationId=${organizationId}`).then((r) => r.json()),
+        fetch(`/api/courses?organizationId=${organizationId}`).then((r) => r.json()),
+      ])
+      if (deptRes.departments) setDepartments(deptRes.departments)
+      if (progRes.programs) setPrograms(progRes.programs)
+      if (courseRes.courses) setCourses(courseRes.courses)
+    } catch (error) {
+      console.error('Error fetching setup data:', error)
+    }
+  }
 
   const fetchUsers = async (organizationId: string) => {
     try {
@@ -76,7 +97,10 @@ export default function UsersPage() {
         })
 
         // Fetch users for this organization
-        await fetchUsers(currentUser.$id)
+        await Promise.all([
+          fetchUsers(currentUser.$id),
+          fetchDataSetup(currentUser.$id)
+        ])
       } catch (error) {
         console.error('Authentication check failed:', error)
         router.push('/login')
@@ -122,6 +146,9 @@ export default function UsersPage() {
         email: formData.email,
         role: formData.role,
         phoneNumber: formData.phone || '', // Map to phoneNumber (Appwrite schema)
+        departmentId: formData.departmentId || null,
+        programId: formData.programId || null,
+        registeredCourses: formData.registeredCourses || [],
         organizationId: user.id,
         isActive: true,
         createdAt: new Date().toISOString(),
@@ -143,6 +170,9 @@ export default function UsersPage() {
           lastName: '',
           role: 'STUDENT',
           phone: '',
+          departmentId: '',
+          programId: '',
+          registeredCourses: [],
         })
         await fetchUsers(user.id)
       } else {
@@ -170,6 +200,9 @@ export default function UsersPage() {
         email: formData.email,
         role: formData.role,
         phoneNumber: formData.phone || '', // Map to phoneNumber (Appwrite schema)
+        departmentId: formData.departmentId || null,
+        programId: formData.programId || null,
+        registeredCourses: formData.registeredCourses || [],
         updatedAt: new Date().toISOString(),
       }
 
@@ -222,6 +255,9 @@ export default function UsersPage() {
       lastName: userData.lastName,
       role: userData.role,
       phone: userData.phone || '',
+      departmentId: userData.departmentId || '',
+      programId: userData.programId || '',
+      registeredCourses: userData.registeredCourses || [],
     })
     setShowEditModal(true)
   }
@@ -515,6 +551,58 @@ export default function UsersPage() {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Department
+                    </label>
+                    <select
+                      value={formData.departmentId}
+                      onChange={(e) => setFormData({ ...formData, departmentId: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    >
+                      <option value="">None</option>
+                      {departments.map((d: any) => (
+                        <option key={d.$id} value={d.$id}>{d.name}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Program
+                    </label>
+                    <select
+                      value={formData.programId}
+                      onChange={(e) => setFormData({ ...formData, programId: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    >
+                      <option value="">None</option>
+                      {programs.map((p: any) => (
+                        <option key={p.$id} value={p.$id}>{p.name}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Registered Courses
+                    </label>
+                    <select
+                      multiple
+                      value={formData.registeredCourses}
+                      onChange={(e) => {
+                        const values = Array.from(e.target.selectedOptions, option => option.value);
+                        setFormData({ ...formData, registeredCourses: values });
+                      }}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 min-h-[100px]"
+                    >
+                      {courses.map((c: any) => (
+                        <option key={c.$id} value={c.$id}>{c.code} - {c.name}</option>
+                      ))}
+                    </select>
+                    <p className="text-xs text-gray-500 mt-1">Hold Ctrl (Windows) or Cmd (Mac) to select multiple courses.</p>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       Role
                     </label>
                     <select
@@ -633,6 +721,58 @@ export default function UsersPage() {
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                     />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Department
+                    </label>
+                    <select
+                      value={formData.departmentId}
+                      onChange={(e) => setFormData({ ...formData, departmentId: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    >
+                      <option value="">None</option>
+                      {departments.map((d: any) => (
+                        <option key={d.$id} value={d.$id}>{d.name}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Program
+                    </label>
+                    <select
+                      value={formData.programId}
+                      onChange={(e) => setFormData({ ...formData, programId: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    >
+                      <option value="">None</option>
+                      {programs.map((p: any) => (
+                        <option key={p.$id} value={p.$id}>{p.name}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Registered Courses
+                    </label>
+                    <select
+                      multiple
+                      value={formData.registeredCourses}
+                      onChange={(e) => {
+                        const values = Array.from(e.target.selectedOptions, option => option.value);
+                        setFormData({ ...formData, registeredCourses: values });
+                      }}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 min-h-[100px]"
+                    >
+                      {courses.map((c: any) => (
+                        <option key={c.$id} value={c.$id}>{c.code} - {c.name}</option>
+                      ))}
+                    </select>
+                    <p className="text-xs text-gray-500 mt-1">Hold Ctrl (Windows) or Cmd (Mac) to select multiple courses.</p>
                   </div>
 
                   <div>
