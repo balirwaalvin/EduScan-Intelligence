@@ -689,7 +689,7 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               {
-                name: "Starter",
+                name: "Genesis",
                 price: "UGX 500,000",
                 period: "/term",
                 description: "Perfect for small institutions",
@@ -704,12 +704,12 @@ export default function LandingPage() {
                 popular: false,
               },
               {
-                name: "Professional",
+                name: "Genesis+",
                 price: "UGX 1,500,000",
                 period: "/term",
                 description: "For growing organizations",
                 features: [
-                  "Everything in Starter, plus:",
+                  "Everything in Genesis, plus:",
                   "Up to 500 users",
                   "Face Recognition",
                   "Biometric attendance",
@@ -720,12 +720,12 @@ export default function LandingPage() {
                 popular: true,
               },
               {
-                name: "Enterprise",
+                name: "Genesis Pro+",
                 price: "Custom",
                 period: "",
                 description: "For large institutions",
                 features: [
-                  "Everything in Professional, plus:",
+                  "Everything in Genesis+, plus:",
                   "Unlimited users",
                   "Voice Over attendance",
                   "Premium analytics",
