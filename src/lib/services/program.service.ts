@@ -118,6 +118,10 @@ export const programService = {
         DATABASE_ID,
         COLLECTIONS.PROGRAMS,
         programId
+      );
+      return { success: true };
+    } catch (error: any) {
+      return { success: false, error: error.message };
     }
   },
 };

@@ -11,7 +11,7 @@ import {
   Users,
   Building2,
 } from "lucide-react";
-import DashboardLayout from "@/components/layout/DashboardLayout";
+import DashboardLayout from "@/components/DashboardLayout";
 
 // Mock data model, replaced by actual service calls
 const mockPrograms = [
@@ -39,7 +39,7 @@ export default function ProgramsDashboard() {
   const [isAddingProgram, setIsAddingProgram] = useState(false);
 
   return (
-    <DashboardLayout role="admin">
+    <DashboardLayout role="ADMIN">
       <div className="p-6 max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <div>
