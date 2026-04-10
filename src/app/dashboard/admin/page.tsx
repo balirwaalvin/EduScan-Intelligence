@@ -162,7 +162,7 @@ export default function AdminDashboard() {
       title: 'Active Sessions',
       value: stats.activeSessionsToday.toString(),
       icon: Calendar,
-      color: 'from-purple-500 to-pink-500',
+      color: 'from-primary-500 to-accent-500',
       change: '+5%',
       trend: 'up',
     },
@@ -186,15 +186,15 @@ export default function AdminDashboard() {
 
   const userBreakdown = [
     { label: 'Students', count: stats.totalStudents, color: 'bg-blue-500' },
-    { label: 'Teachers', count: stats.totalTeachers, color: 'bg-purple-500' },
-    { label: 'Class Reps', count: stats.totalClassReps, color: 'bg-pink-500' },
+    { label: 'Teachers', count: stats.totalTeachers, color: 'bg-primary-500' },
+    { label: 'Class Reps', count: stats.totalClassReps, color: 'bg-accent-500' },
   ]
 
   return (
     <DashboardLayout role="ADMIN" user={user}>
       <div className="space-y-6">
         {/* Welcome Section with Refresh */}
-        <div className="bg-gradient-to-r from-primary-600 to-accent-600 rounded-2xl p-8 text-white">
+        <div className="bg-primary-50 text-primary-600 border border-primary-100 rounded-2xl p-8">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold mb-2">
@@ -340,10 +340,10 @@ export default function AdminDashboard() {
                           <QrCode className="w-5 h-5 text-blue-500" />
                         )}
                         {session.allowedMethods?.includes('RFID') && (
-                          <Radio className="w-5 h-5 text-purple-500" />
+                          <Radio className="w-5 h-5 text-primary-500" />
                         )}
                         {session.allowedMethods?.includes('FACIAL_RECOGNITION') && (
-                          <ScanIcon className="w-5 h-5 text-pink-500" />
+                          <ScanIcon className="w-5 h-5 text-accent-500" />
                         )}
                       </div>
                     </div>

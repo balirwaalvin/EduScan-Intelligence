@@ -231,7 +231,7 @@ export default function LiveAttendanceDashboard({ sessionId, sessionName, onClos
         className="bg-white rounded-2xl shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden flex flex-col"
       >
         {/* Header */}
-        <div className="bg-gradient-to-r from-primary-600 to-accent-600 p-6 text-white">
+        <div className="bg-primary-50 text-primary-600 border border-primary-100 p-6">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h2 className="text-2xl font-bold mb-1">Live Attendance Dashboard</h2>

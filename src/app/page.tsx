@@ -31,7 +31,7 @@ export default function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-blue-50 via-sky-50 to-primary-50">
       <LiquidCursor />
       <BackgroundGradient />
 
@@ -51,7 +51,7 @@ export default function LandingPage() {
         }}
       />
       <motion.div
-        className="absolute top-40 right-20 w-40 h-40 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full opacity-25 blur-3xl"
+        className="absolute top-40 right-20 w-40 h-40 bg-gradient-to-br from-primary-400 to-accent-400 rounded-full opacity-25 blur-3xl"
         animate={{
           y: [0, 50, 0],
           x: [0, -40, 0],
@@ -65,7 +65,7 @@ export default function LandingPage() {
         }}
       />
       <motion.div
-        className="absolute bottom-20 left-1/4 w-36 h-36 bg-gradient-to-br from-indigo-400 to-blue-500 rounded-full opacity-30 blur-3xl"
+        className="absolute bottom-20 left-1/4 w-36 h-36 bg-gradient-to-br from-sky-400 to-blue-500 rounded-full opacity-30 blur-3xl"
         animate={{
           y: [0, -30, 0],
           x: [0, 40, 0],
@@ -94,7 +94,7 @@ export default function LandingPage() {
       />
       {/* Small floating bubbles */}
       <motion.div
-        className="absolute top-1/4 right-1/3 w-20 h-20 bg-gradient-to-br from-purple-300 to-pink-300 rounded-full opacity-40 blur-2xl"
+        className="absolute top-1/4 right-1/3 w-20 h-20 bg-gradient-to-br from-primary-300 to-accent-300 rounded-full opacity-40 blur-2xl"
         animate={{
           y: [0, -60, 0],
           x: [0, 20, 0],
@@ -108,7 +108,7 @@ export default function LandingPage() {
         }}
       />
       <motion.div
-        className="absolute bottom-1/3 right-1/4 w-24 h-24 bg-gradient-to-br from-blue-300 to-indigo-400 rounded-full opacity-35 blur-2xl"
+        className="absolute bottom-1/3 right-1/4 w-24 h-24 bg-gradient-to-br from-blue-300 to-sky-400 rounded-full opacity-35 blur-2xl"
         animate={{
           y: [0, 45, 0],
           x: [0, -35, 0],
@@ -136,7 +136,7 @@ export default function LandingPage() {
         }}
       />
       <motion.div
-        className="absolute bottom-1/4 left-1/3 w-32 h-32 bg-gradient-to-br from-pink-300 to-purple-400 rounded-full opacity-25 blur-3xl"
+        className="absolute bottom-1/4 left-1/3 w-32 h-32 bg-gradient-to-br from-accent-300 to-primary-400 rounded-full opacity-25 blur-3xl"
         animate={{
           y: [0, 40, 0],
           x: [0, -30, 0],
@@ -196,7 +196,7 @@ export default function LandingPage() {
               </Link>
               <Link
                 href="/trial"
-                className="bg-gradient-to-r from-primary-600 to-accent-600 text-white px-6 py-2 rounded-full hover:shadow-lg transition transform hover:scale-105"
+                className="bg-primary-50 text-primary-600 border border-primary-100 px-6 py-2 rounded-full hover:shadow-lg transition transform hover:scale-105"
               >
                 Start Free Trial
               </Link>
@@ -283,7 +283,7 @@ export default function LandingPage() {
               {/* Headline */}
               <h1 className="text-5xl lg:text-7xl font-extrabold tracking-tight text-gray-900 mb-6 leading-[1.1]">
                 <span className="block mb-2">The Future of</span>
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 via-indigo-600 to-accent-600">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 via-sky-600 to-accent-600">
                   Smart Attendance.
                 </span>
               </h1>
@@ -307,7 +307,7 @@ export default function LandingPage() {
               <div className="flex items-center gap-4 text-sm text-gray-600 font-medium">
                 <div className="flex -space-x-3">
                   {[...Array(4)].map((_, i) => (
-                    <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-gradient-to-br from-indigo-100 to-primary-100 flex items-center justify-center overflow-hidden">
+                    <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-gradient-to-br from-sky-100 to-primary-100 flex items-center justify-center overflow-hidden">
                       <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i + 'edu'}`} alt="avatar" className="w-full h-full object-cover" />
                     </div>
                   ))}
@@ -330,7 +330,7 @@ export default function LandingPage() {
             >
               {/* Decorative backgrounds */}
               <div className="absolute inset-0 bg-gradient-to-tr from-primary-400/20 to-accent-400/20 rounded-[3rem] blur-3xl transform rotate-3" />
-              <div className="absolute inset-0 bg-gradient-to-bl from-blue-300/20 to-purple-300/20 rounded-[3rem] blur-2xl transform -rotate-6" />
+              <div className="absolute inset-0 bg-gradient-to-bl from-blue-300/20 to-primary-300/20 rounded-[3rem] blur-2xl transform -rotate-6" />
               
               {/* Main Scanner Card */}
               <div className="relative w-full max-w-md bg-white/70 backdrop-blur-xl border border-white/50 p-6 rounded-3xl shadow-2xl transform-gpu transition-transform duration-700 z-10 xl:rotate-y-[-10deg] xl:rotate-x-[5deg] xl:hover:rotate-0">
@@ -391,7 +391,7 @@ export default function LandingPage() {
                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                  className="absolute -right-4 md:-right-8 top-1/4 bg-white/90 p-4 rounded-2xl shadow-xl border border-white/50 flex items-center gap-3 backdrop-blur-md z-20"
               >
-                  <div className="bg-gradient-to-br from-purple-500 to-indigo-500 p-2.5 rounded-xl text-white shadow-inner">
+                  <div className="bg-primary-50 text-primary-600 border border-primary-100 p-2.5 rounded-xl  shadow-inner">
                     <Fingerprint className="w-5 h-5" />
                   </div>
                   <div>
@@ -406,7 +406,7 @@ export default function LandingPage() {
                  transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
                  className="absolute -left-4 md:-left-8 bottom-1/4 bg-white/90 p-4 rounded-2xl shadow-xl border border-white/50 flex items-center gap-3 backdrop-blur-md z-20"
               >
-                  <div className="bg-gradient-to-br from-blue-500 to-cyan-500 p-2.5 rounded-xl text-white shadow-inner">
+                  <div className="bg-blue-50 text-blue-600 border border-blue-100 p-2.5 rounded-xl  shadow-inner">
                     <Radio className="w-5 h-5" />
                   </div>
                   <div>
@@ -421,7 +421,7 @@ export default function LandingPage() {
                  transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 2 }}
                  className="absolute -bottom-8 right-10 bg-white/90 p-4 rounded-2xl shadow-xl border border-white/50 flex items-center gap-3 backdrop-blur-md z-20 hidden md:flex"
               >
-                  <div className="bg-gradient-to-br from-orange-500 to-red-500 p-2.5 rounded-xl text-white shadow-inner">
+                  <div className="bg-orange-50 text-orange-600 border border-orange-100 p-2.5 rounded-xl  shadow-inner">
                     <TrendingUp className="w-5 h-5" />
                   </div>
                   <div>
@@ -509,7 +509,7 @@ export default function LandingPage() {
                 title: "Role-Based Access",
                 description:
                   "Separate dashboards for Admin, Teachers, and Class Representatives",
-                color: "from-purple-500 to-pink-500",
+                color: "from-primary-500 to-accent-500",
               },
               {
                 icon: Shield,
@@ -522,14 +522,14 @@ export default function LandingPage() {
                 title: "Mobile Ready",
                 description:
                   "Access from any device - desktop, tablet, or smartphone",
-                color: "from-indigo-500 to-blue-500",
+                color: "from-sky-500 to-blue-500",
               },
               {
                 icon: Clock,
                 title: "Automated Reports",
                 description:
                   "Generate and schedule attendance reports automatically",
-                color: "from-red-500 to-pink-500",
+                color: "from-red-500 to-accent-500",
               },
               {
                 icon: Globe,
@@ -549,7 +549,7 @@ export default function LandingPage() {
                 icon: TrendingUp,
                 title: "Performance Tracking",
                 description: "Track attendance patterns and identify trends",
-                color: "from-violet-500 to-purple-500",
+                color: "from-accent-600 to-primary-500",
               },
             ].map((feature, index) => (
               <motion.div
@@ -664,7 +664,7 @@ export default function LandingPage() {
         className="py-20 px-4 sm:px-6 lg:px-8 bg-slate-50/50 relative overflow-hidden"
       >
         <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-blue-100/30 rounded-full blur-3xl -z-10"></div>
-        <div className="absolute bottom-0 left-0 w-1/3 h-1/3 bg-purple-100/30 rounded-full blur-3xl -z-10"></div>
+        <div className="absolute bottom-0 left-0 w-1/3 h-1/3 bg-primary-100/30 rounded-full blur-3xl -z-10"></div>
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <motion.h2
@@ -751,7 +751,7 @@ export default function LandingPage() {
               >
                 {plan.popular && (
                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                    <span className="bg-gradient-to-r from-primary-600 to-accent-600 text-white px-4 py-1 rounded-full text-sm font-semibold shadow-md">
+                    <span className="bg-primary-50 text-primary-600 border border-primary-100 px-4 py-1 rounded-full text-sm font-semibold shadow-md">
                       Most Popular
                     </span>
                   </div>
@@ -899,7 +899,7 @@ export default function LandingPage() {
             whileInView={{ opacity: 1, scale: 1, y: 0 }}
             viewport={{ once: true }}
             whileHover={{ scale: 1.02 }}
-            className="bg-gradient-to-r from-primary-600 to-accent-600 rounded-3xl p-12 text-center text-white shadow-2xl relative overflow-hidden"
+            className="bg-primary-50 text-primary-600 border border-primary-100 rounded-3xl p-12 text-center  shadow-2xl relative overflow-hidden"
           >
             {/* Decorative circles */}
             <div className="absolute top-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>

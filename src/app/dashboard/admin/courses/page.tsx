@@ -205,7 +205,7 @@ export default function CoursesPage() {
             </div>
             <button
               onClick={() => setShowCreateModal(true)}
-              className="bg-gradient-to-r from-primary-600 to-accent-600 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition flex items-center space-x-2"
+              className="bg-primary-50 text-primary-600 border border-primary-100 px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition flex items-center space-x-2"
             >
               <Plus className="w-5 h-5" />
               <span>Add Course</span>
@@ -265,7 +265,7 @@ export default function CoursesPage() {
               className="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition"
             >
               <div className="flex items-start justify-between mb-4">
-                <div className="bg-gradient-to-br from-purple-600 to-pink-600 p-3 rounded-lg">
+                <div className="bg-primary-50 text-primary-600 border border-primary-100 p-3 rounded-xl">
                   <BookOpen className="w-6 h-6 text-white" />
                 </div>
                 <div className="flex space-x-2">

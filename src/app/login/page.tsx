@@ -85,7 +85,7 @@ export default function LoginPage() {
             y: [0, 50, 0],
           }}
           transition={{ duration: 25, repeat: Infinity, ease: "linear", delay: 5 }}
-          className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-purple-600/20 rounded-full blur-[120px] mix-blend-screen"
+          className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-primary-600/20 rounded-full blur-[120px] mix-blend-screen"
         />
 
         {/* Neon Snake Glow Effect */}
@@ -108,7 +108,7 @@ export default function LoginPage() {
         className="max-w-md w-full relative z-10"
       >
         {/* Glow Effect Wrapper */}
-        <div className="absolute -inset-1 bg-gradient-to-r from-primary-600 to-purple-600 rounded-2xl blur opacity-75 animate-pulse transition duration-1000"></div>
+        <div className="absolute -inset-1 bg-gradient-to-r from-primary-600 to-primary-600 rounded-2xl blur opacity-75 animate-pulse transition duration-1000"></div>
 
         <div className="relative bg-gray-900/80 backdrop-blur-xl border border-gray-800 rounded-2xl p-8 shadow-2xl ring-1 ring-white/10">
           {/* Header */}
@@ -130,7 +130,7 @@ export default function LoginPage() {
             >
               <div className="relative">
                 {/* Glow effect layers */}
-                <div className="absolute inset-0 bg-gradient-to-r from-primary-500 via-purple-500 to-accent-500 rounded-2xl blur-2xl opacity-40 animate-pulse"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-primary-500 to-accent-500 rounded-2xl blur-2xl opacity-40 animate-pulse"></div>
                 <div className="absolute inset-0 bg-gradient-to-r from-primary-400 to-accent-400 rounded-2xl blur-xl opacity-30"></div>
 
                 {/* Logo */}
@@ -216,7 +216,7 @@ export default function LoginPage() {
               whileTap={{ scale: 0.98 }}
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-primary-600 to-purple-600 text-white py-3 rounded-lg font-semibold shadow-lg shadow-primary-500/25 hover:shadow-primary-500/40 transition-all disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden"
+              className="w-full bg-gradient-to-r from-primary-600 to-primary-600 text-white py-3 rounded-lg font-semibold shadow-lg shadow-primary-500/25 hover:shadow-primary-500/40 transition-all disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden"
             >
               {loading ? (
                 <div className="flex items-center justify-center space-x-2">

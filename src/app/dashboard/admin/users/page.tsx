@@ -278,7 +278,7 @@ export default function UsersPage() {
       case 'ADMIN':
         return 'bg-red-100 text-red-700'
       case 'TEACHER':
-        return 'bg-purple-100 text-purple-700'
+        return 'bg-primary-100 text-primary-700'
       case 'CLASS_REP':
         return 'bg-blue-100 text-blue-700'
       case 'STUDENT':
@@ -300,7 +300,7 @@ export default function UsersPage() {
             </div>
             <button
               onClick={() => setShowCreateModal(true)}
-              className="bg-gradient-to-r from-primary-600 to-accent-600 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition flex items-center space-x-2"
+              className="bg-primary-50 text-primary-600 border border-primary-100 px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition flex items-center space-x-2"
             >
               <Plus className="w-5 h-5" />
               <span>Add User</span>
