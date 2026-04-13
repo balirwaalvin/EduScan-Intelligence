@@ -899,11 +899,11 @@ export default function LandingPage() {
             whileInView={{ opacity: 1, scale: 1, y: 0 }}
             viewport={{ once: true }}
             whileHover={{ scale: 1.02 }}
-            className="bg-primary-50 text-primary-600 border border-primary-100 rounded-3xl p-12 text-center  shadow-2xl relative overflow-hidden"
+            className="bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800 text-white border border-primary-500/40 rounded-3xl p-12 text-center shadow-2xl relative overflow-hidden"
           >
             {/* Decorative circles */}
-            <div className="absolute top-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
-            <div className="absolute bottom-0 right-0 w-64 h-64 bg-black/10 rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
+            <div className="absolute top-0 left-0 w-64 h-64 bg-white/15 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
+            <div className="absolute bottom-0 right-0 w-64 h-64 bg-black/20 rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
 
             <h2 className="text-4xl md:text-5xl font-bold mb-6 relative z-10">
               Ready to Transform Your Attendance?
