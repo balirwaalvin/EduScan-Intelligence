@@ -31,7 +31,7 @@ export default function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-blue-50 via-sky-50 to-primary-50">
       <LiquidCursor />
       <BackgroundGradient />
 
@@ -51,7 +51,7 @@ export default function LandingPage() {
         }}
       />
       <motion.div
-        className="absolute top-40 right-20 w-40 h-40 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full opacity-25 blur-3xl"
+        className="absolute top-40 right-20 w-40 h-40 bg-gradient-to-br from-primary-400 to-accent-400 rounded-full opacity-25 blur-3xl"
         animate={{
           y: [0, 50, 0],
           x: [0, -40, 0],
@@ -65,7 +65,7 @@ export default function LandingPage() {
         }}
       />
       <motion.div
-        className="absolute bottom-20 left-1/4 w-36 h-36 bg-gradient-to-br from-indigo-400 to-blue-500 rounded-full opacity-30 blur-3xl"
+        className="absolute bottom-20 left-1/4 w-36 h-36 bg-gradient-to-br from-sky-400 to-blue-500 rounded-full opacity-30 blur-3xl"
         animate={{
           y: [0, -30, 0],
           x: [0, 40, 0],
@@ -94,7 +94,7 @@ export default function LandingPage() {
       />
       {/* Small floating bubbles */}
       <motion.div
-        className="absolute top-1/4 right-1/3 w-20 h-20 bg-gradient-to-br from-purple-300 to-pink-300 rounded-full opacity-40 blur-2xl"
+        className="absolute top-1/4 right-1/3 w-20 h-20 bg-gradient-to-br from-primary-300 to-accent-300 rounded-full opacity-40 blur-2xl"
         animate={{
           y: [0, -60, 0],
           x: [0, 20, 0],
@@ -108,7 +108,7 @@ export default function LandingPage() {
         }}
       />
       <motion.div
-        className="absolute bottom-1/3 right-1/4 w-24 h-24 bg-gradient-to-br from-blue-300 to-indigo-400 rounded-full opacity-35 blur-2xl"
+        className="absolute bottom-1/3 right-1/4 w-24 h-24 bg-gradient-to-br from-blue-300 to-sky-400 rounded-full opacity-35 blur-2xl"
         animate={{
           y: [0, 45, 0],
           x: [0, -35, 0],
@@ -136,7 +136,7 @@ export default function LandingPage() {
         }}
       />
       <motion.div
-        className="absolute bottom-1/4 left-1/3 w-32 h-32 bg-gradient-to-br from-pink-300 to-purple-400 rounded-full opacity-25 blur-3xl"
+        className="absolute bottom-1/4 left-1/3 w-32 h-32 bg-gradient-to-br from-accent-300 to-primary-400 rounded-full opacity-25 blur-3xl"
         animate={{
           y: [0, 40, 0],
           x: [0, -30, 0],
@@ -196,7 +196,7 @@ export default function LandingPage() {
               </Link>
               <Link
                 href="/trial"
-                className="bg-gradient-to-r from-primary-600 to-accent-600 text-white px-6 py-2 rounded-full hover:shadow-lg transition transform hover:scale-105"
+                className="bg-primary-50 text-primary-600 border border-primary-100 px-6 py-2 rounded-full hover:shadow-lg transition transform hover:scale-105"
               >
                 Start Free Trial
               </Link>
@@ -261,643 +261,177 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 relative">
-        <div className="max-w-7xl mx-auto">
-          <motion.div className="text-center relative">
-            {/* Floating Badge with Live Stats */}
-            <motion.div
-              initial={{ opacity: 0, y: -20, scale: 0.8 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{
-                duration: 0.8,
-                type: "spring",
-                stiffness: 100,
-                damping: 10,
-              }}
-              whileHover={{
-                scale: 1.05,
-                transition: { type: "spring", stiffness: 300, damping: 20 },
-              }}
-              className="inline-flex items-center space-x-2 bg-gradient-to-r from-primary-100 to-accent-100 text-primary-700 px-6 py-3 rounded-full mb-6 shadow-lg border border-primary-200 relative overflow-hidden"
+      <section className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden flex flex-col justify-center min-h-[90vh]">
+        <div className="max-w-7xl mx-auto w-full">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+            {/* Left Content Column */}
+            <motion.div 
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, type: "spring" }}
+              className="relative z-10"
             >
-              <motion.div
-                animate={{
-                  opacity: [0.5, 1, 0.5],
-                  scale: [0.95, 1.05, 0.95],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-                className="absolute inset-0 bg-gradient-to-r from-primary-200/50 to-accent-200/50 blur-xl"
-              />
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-              >
-                <TrendingUp className="w-5 h-5 relative z-10" />
-              </motion.div>
-              <span className="text-sm font-semibold relative z-10">
-                🔥 Join 10,000+ Organizations • 99.9% Uptime
-              </span>
-            </motion.div>
-
-            {/* Enhanced Animated Title with New Structure */}
-            <motion.h1
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="text-5xl md:text-7xl lg:text-8xl font-bold mb-8 leading-[1.1] relative"
-            >
-              {/* Dynamic Background Glows */}
-              <motion.div
-                animate={{
-                  scale: [1, 1.4, 1],
-                  x: [0, 40, -20, 0],
-                  y: [0, -40, 30, 0],
-                  opacity: [0.3, 0.6, 0.3],
-                }}
-                transition={{
-                  duration: 10,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-                className="absolute top-0 right-1/4 w-48 h-48 bg-gradient-to-br from-primary-300 to-cyan-300 rounded-full blur-3xl -z-10"
-              />
-              <motion.div
-                animate={{
-                  scale: [1, 1.5, 1],
-                  x: [0, -50, 40, 0],
-                  y: [0, 30, -50, 0],
-                  opacity: [0.3, 0.7, 0.3],
-                }}
-                transition={{
-                  duration: 12,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: 1,
-                }}
-                className="absolute bottom-0 left-1/4 w-56 h-56 bg-gradient-to-br from-accent-300 to-pink-300 rounded-full blur-3xl -z-10"
-              />
-              <motion.div
-                animate={{
-                  scale: [1, 1.3, 1],
-                  rotate: [0, 180, 360],
-                  opacity: [0.2, 0.5, 0.2],
-                }}
-                transition={{
-                  duration: 15,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: 0.5,
-                }}
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-br from-indigo-300 to-purple-300 rounded-full blur-3xl -z-10"
-              />
-
-              {/* Animated Text Lines with New Compelling Copy */}
-              <div className="relative">
-                <motion.div
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{
-                    duration: 0.8,
-                    delay: 0.3,
-                    type: "spring",
-                    stiffness: 80,
-                  }}
-                  className="mb-2"
-                >
-                  <motion.span
-                    animate={{
-                      backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
-                    }}
-                    transition={{
-                      duration: 5,
-                      repeat: Infinity,
-                      ease: "linear",
-                    }}
-                    className="inline-block bg-clip-text text-transparent bg-gradient-to-r from-gray-900 via-primary-600 to-gray-900 bg-[length:200%_auto] relative"
-                  >
-                    <motion.span
-                      animate={{
-                        textShadow: [
-                          "0 0 0px rgba(14, 165, 233, 0)",
-                          "0 0 20px rgba(14, 165, 233, 0.3)",
-                          "0 0 0px rgba(14, 165, 233, 0)",
-                        ],
-                      }}
-                      transition={{
-                        duration: 3,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                      }}
-                    >
-                      Smart Attendance.
-                    </motion.span>
-                  </motion.span>
-                </motion.div>
-                <motion.div
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{
-                    duration: 0.8,
-                    delay: 0.5,
-                    type: "spring",
-                    stiffness: 80,
-                  }}
-                >
-                  <motion.span
-                    animate={{
-                      backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
-                    }}
-                    transition={{
-                      duration: 4,
-                      repeat: Infinity,
-                      ease: "linear",
-                    }}
-                    className="gradient-text bg-[length:200%_auto] relative inline-block"
-                  >
-                    <motion.span
-                      animate={{
-                        textShadow: [
-                          "0 0 0px rgba(192, 38, 211, 0)",
-                          "0 0 25px rgba(192, 38, 211, 0.4)",
-                          "0 0 0px rgba(192, 38, 211, 0)",
-                        ],
-                      }}
-                      transition={{
-                        duration: 2.5,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                        delay: 0.5,
-                      }}
-                    >
-                      Zero Effort.
-                    </motion.span>
-                  </motion.span>
-                </motion.div>
-                <motion.div
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{
-                    duration: 0.8,
-                    delay: 0.7,
-                    type: "spring",
-                    stiffness: 80,
-                  }}
-                  className="mt-2"
-                >
-                  <span className="text-gray-700 font-semibold">
-                    Infinite Possibilities.
-                  </span>
-                </motion.div>
-              </div>
-            </motion.h1>
-
-            {/* Enhanced Description with Value Proposition */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.9 }}
-              className="relative mb-8"
-            >
-              {/* Multi-layered Description Glow */}
-              <motion.div
-                animate={{
-                  scale: [1, 1.2, 1],
-                  rotate: [0, 5, -5, 0],
-                  opacity: [0.2, 0.4, 0.2],
-                }}
-                transition={{
-                  duration: 8,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-32 bg-gradient-to-r from-purple-200 via-pink-200 to-blue-200 rounded-full blur-3xl -z-10"
-              />
-
-              <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed relative">
-                Automate attendance tracking with{" "}
-                <span className="text-primary-600 font-bold">
-                  AI-powered facial recognition, QR codes, RFID, voice-over, and
-                  biometric technology
+              {/* Badge */}
+              <div className="inline-flex items-center space-x-2 bg-white/50 backdrop-blur-md px-4 py-2 rounded-full border border-primary-200 shadow-sm mb-6">
+                <span className="flex h-2 w-2 relative">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-primary-500"></span>
                 </span>
-                . Reduce time spent by{" "}
-                <span className="text-accent-600 font-bold">85%</span> while
-                increasing accuracy to{" "}
-                <span className="text-green-600 font-bold">99.9%</span>.
-              </p>
-            </motion.div>
-
-            {/* Live Analytics Stats Bar */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, delay: 1.3 }}
-              className="mb-10 max-w-4xl mx-auto"
-            >
-              <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl border border-gray-200 p-6">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                  {[
-                    {
-                      value: "10K+",
-                      label: "Active Users",
-                      icon: Users,
-                      color: "from-blue-500 to-cyan-500",
-                      delay: 1.4,
-                    },
-                    {
-                      value: "500M+",
-                      label: "Scans Processed",
-                      icon: Scan,
-                      color: "from-purple-500 to-pink-500",
-                      delay: 1.5,
-                    },
-                    {
-                      value: "99.9%",
-                      label: "Accuracy Rate",
-                      icon: CheckCircle2,
-                      color: "from-green-500 to-emerald-500",
-                      delay: 1.6,
-                    },
-                    {
-                      value: "85%",
-                      label: "Time Saved",
-                      icon: Clock,
-                      color: "from-orange-500 to-red-500",
-                      delay: 1.7,
-                    },
-                  ].map((stat, index) => (
-                    <motion.div
-                      key={index}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{
-                        duration: 0.5,
-                        delay: stat.delay,
-                        type: "spring",
-                        stiffness: 100,
-                      }}
-                      whileHover={{ scale: 1.05, y: -5 }}
-                      className="text-center relative group"
-                    >
-                      <motion.div
-                        animate={{
-                          scale: [1, 1.1, 1],
-                          rotate: [0, 5, -5, 0],
-                        }}
-                        transition={{
-                          duration: 3,
-                          repeat: Infinity,
-                          delay: index * 0.5,
-                        }}
-                        className={`w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow`}
-                      >
-                        <stat.icon className="w-6 h-6 text-white" />
-                      </motion.div>
-                      <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{
-                          duration: 0.5,
-                          delay: stat.delay + 0.2,
-                          type: "spring",
-                          stiffness: 200,
-                        }}
-                        className="text-2xl md:text-3xl font-bold text-gray-900 mb-1"
-                      >
-                        {stat.value}
-                      </motion.div>
-                      <div className="text-xs md:text-sm text-gray-600 font-medium">
-                        {stat.label}
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
+                <span className="text-sm font-medium text-primary-800">EduScan Intelligence 2.0 is Live</span>
               </div>
-            </motion.div>
+              
+              {/* Headline */}
+              <h1 className="text-5xl lg:text-7xl font-extrabold tracking-tight text-gray-900 mb-6 leading-[1.1]">
+                <span className="block mb-2">The Future of</span>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 via-sky-600 to-accent-600">
+                  Smart Attendance.
+                </span>
+              </h1>
 
-            {/* Enhanced CTA Buttons with Advanced Hover Effects */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 1.8 }}
-              className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8"
-            >
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Link
-                  href="/trial"
-                  className="group relative bg-gradient-to-r from-primary-600 to-accent-600 text-white px-10 py-5 rounded-full text-lg font-semibold shadow-xl transition flex items-center space-x-3 overflow-hidden"
-                >
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-accent-600 to-primary-600"
-                    initial={{ x: "100%" }}
-                    whileHover={{ x: 0 }}
-                    transition={{ duration: 0.3 }}
-                  />
-                  <Zap className="w-5 h-5 relative z-10" />
-                  <span className="relative z-10">Get Started Free</span>
-                  <motion.div
-                    animate={{ x: [0, 5, 0] }}
-                    transition={{ duration: 1.5, repeat: Infinity }}
-                    className="relative z-10"
-                  >
-                    <ArrowRight className="w-5 h-5" />
-                  </motion.div>
+              {/* Subheadline */}
+              <p className="text-lg md:text-xl text-gray-600 mb-8 leading-relaxed max-w-lg">
+                Empowering institutions with <strong className="text-gray-900">AI-driven facial recognition</strong>, dynamic QR codes, RFID, and biometric tracking. Fast, secure, and effortlessly accurate.
+              </p>
+
+              {/* CTAs */}
+              <div className="flex flex-col sm:flex-row gap-4 mb-10">
+                <Link href="/trial" className="group inline-flex justify-center items-center px-8 py-4 text-base font-semibold text-white bg-gradient-to-r from-primary-600 to-accent-600 rounded-full hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                  Start Your Free Trial <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Link>
-              </motion.div>
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <a
-                  href="#demo"
-                  className="relative bg-white text-gray-700 px-10 py-5 rounded-full text-lg font-semibold border-2 border-gray-300 hover:border-primary-600 hover:text-primary-600 transition shadow-lg overflow-hidden group flex items-center space-x-2"
-                >
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-primary-50 to-accent-50 opacity-0 group-hover:opacity-100"
-                    transition={{ duration: 0.3 }}
-                  />
-                  <Globe className="w-5 h-5 relative z-10" />
-                  <span className="relative z-10">Schedule Demo</span>
+                <a href="#how-it-works" className="inline-flex justify-center items-center px-8 py-4 text-base font-semibold text-gray-700 bg-white border-2 border-gray-200 rounded-full hover:border-primary-600 hover:text-primary-600 transition-all duration-300">
+                  <Scan className="ml-2 w-5 h-5 mr-2" /> See How It Works
                 </a>
+              </div>
+
+              {/* Mini Social Proof */}
+              <div className="flex items-center gap-4 text-sm text-gray-600 font-medium">
+                <div className="flex -space-x-3">
+                  {[...Array(4)].map((_, i) => (
+                    <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-gradient-to-br from-sky-100 to-primary-100 flex items-center justify-center overflow-hidden">
+                      <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i + 'edu'}`} alt="avatar" className="w-full h-full object-cover" />
+                    </div>
+                  ))}
+                </div>
+                <div>
+                  <div className="flex items-center gap-1 text-yellow-500 mb-1">
+                    {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 fill-current" />)}
+                  </div>
+                  Trusted by 10,000+ Educators
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Right Visual Column */}
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, rotateY: 10 }}
+              animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+              transition={{ duration: 1, type: "spring", delay: 0.2 }}
+              className="relative lg:h-[600px] flex items-center justify-center perspective-[1000px] mt-10 lg:mt-0"
+            >
+              {/* Decorative backgrounds */}
+              <div className="absolute inset-0 bg-gradient-to-tr from-primary-400/20 to-accent-400/20 rounded-[3rem] blur-3xl transform rotate-3" />
+              <div className="absolute inset-0 bg-gradient-to-bl from-blue-300/20 to-primary-300/20 rounded-[3rem] blur-2xl transform -rotate-6" />
+              
+              {/* Main Scanner Card */}
+              <div className="relative w-full max-w-md bg-white/70 backdrop-blur-xl border border-white/50 p-6 rounded-3xl shadow-2xl transform-gpu transition-transform duration-700 z-10 xl:rotate-y-[-10deg] xl:rotate-x-[5deg] xl:hover:rotate-0">
+                {/* App Header overlay */}
+                <div className="flex justify-between items-center mb-6 border-b border-gray-100 pb-4">
+                   <div className="flex items-center gap-2">
+                     <Shield className="w-5 h-5 text-primary-500" />
+                     <span className="font-semibold text-gray-800">Live Verification</span>
+                   </div>
+                   <div className="flex items-center gap-2">
+                     <span className="text-xs text-gray-500 font-medium">System Active</span>
+                     <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+                   </div>
+                </div>
+
+                {/* Profile Scanner Graphic */}
+                <div className="relative bg-gray-50 rounded-2xl p-8 flex flex-col items-center justify-center overflow-hidden border border-gray-100 shadow-inner group">
+                  {/* Scanning Laser Line */}
+                  <motion.div 
+                    animate={{ top: ["0%", "100%", "0%"] }}
+                    transition={{ duration: 2.5, repeat: Infinity, ease: "linear" }}
+                    className="absolute left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary-500 to-transparent z-20 shadow-[0_0_15px_rgba(59,130,246,0.6)]"
+                  />
+                  
+                  {/* Grid background for technical feel */}
+                  <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:20px_20px]" />
+                  
+                  {/* Profile Placeholder */}
+                  <div className="w-32 h-32 rounded-full bg-white mb-4 relative z-10 overflow-hidden border-4 border-white shadow-lg">
+                     <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=student1" alt="student" className="w-full h-full object-cover opacity-90" />
+                  </div>
+                  
+                  {/* Mock Loading Bars */}
+                  <div className="h-4 w-32 bg-gray-200 rounded-full mb-3 relative z-10 overflow-hidden">
+                    <motion.div 
+                      animate={{ x: ["-100%", "100%"] }}
+                      transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/60 to-transparent" 
+                    />
+                  </div>
+                  <div className="h-3 w-20 bg-primary-100 rounded-full relative z-10" />
+                </div>
+
+                {/* Status Items below */}
+                <div className="mt-6 flex justify-between gap-3">
+                  <div className="flex bg-green-50 text-green-700 rounded-xl p-3 flex-1 items-center justify-center gap-2 font-medium text-sm border border-green-100">
+                    <CheckCircle2 className="w-4 h-4" /> Match Found
+                  </div>
+                  <div className="flex bg-blue-50 text-blue-700 rounded-xl p-3 flex-1 items-center justify-center gap-2 font-medium text-sm border border-blue-100">
+                    <Clock className="w-4 h-4" /> 0.2s Verify
+                  </div>
+                </div>
+              </div>
+
+              {/* Floating Badge: Biometric */}
+              <motion.div 
+                 animate={{ y: [0, -15, 0] }}
+                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                 className="absolute -right-4 md:-right-8 top-1/4 bg-white/90 p-4 rounded-2xl shadow-xl border border-white/50 flex items-center gap-3 backdrop-blur-md z-20"
+              >
+                  <div className="bg-primary-50 text-primary-600 border border-primary-100 p-2.5 rounded-xl  shadow-inner">
+                    <Fingerprint className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500 font-medium">Biometrics</p>
+                    <p className="text-sm font-bold text-gray-900">Supported</p>
+                  </div>
               </motion.div>
+
+              {/* Floating Badge: RFID */}
+              <motion.div 
+                 animate={{ y: [0, 20, 0] }}
+                 transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                 className="absolute -left-4 md:-left-8 bottom-1/4 bg-white/90 p-4 rounded-2xl shadow-xl border border-white/50 flex items-center gap-3 backdrop-blur-md z-20"
+              >
+                  <div className="bg-blue-50 text-blue-600 border border-blue-100 p-2.5 rounded-xl  shadow-inner">
+                    <Radio className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500 font-medium">RFID Scan</p>
+                    <p className="text-sm font-bold text-gray-900">Active</p>
+                  </div>
+              </motion.div>
+
+              {/* Floating Badge: AI Engine */}
+              <motion.div 
+                 animate={{ y: [0, -10, 0], x: [0, 10, 0] }}
+                 transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+                 className="absolute -bottom-8 right-10 bg-white/90 p-4 rounded-2xl shadow-xl border border-white/50 flex items-center gap-3 backdrop-blur-md z-20 hidden md:flex"
+              >
+                  <div className="bg-orange-50 text-orange-600 border border-orange-100 p-2.5 rounded-xl  shadow-inner">
+                    <TrendingUp className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500 font-medium">AI Engine</p>
+                    <p className="text-sm font-bold text-green-600">99.9% Accuracy</p>
+                  </div>
+              </motion.div>
+
             </motion.div>
-
-            {/* Trust Indicators - Scrolling Marquee */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 2.0 }}
-              className="text-center mb-8"
-            >
-              <p className="text-sm text-gray-500 mb-4 font-medium">
-                Trusted by Institutions countrywide
-              </p>
-              <div className="relative overflow-hidden max-w-4xl mx-auto">
-                {/* Fade edges */}
-                <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-slate-50 to-transparent z-10 pointer-events-none" />
-                <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-slate-50 to-transparent z-10 pointer-events-none" />
-                <div
-                  className="flex items-center gap-10 whitespace-nowrap"
-                  style={{
-                    animation: "marquee-scroll 20s linear infinite",
-                    width: "max-content",
-                  }}
-                >
-                  {[
-                    "Seeta University",
-                    "Cavendish University Uganda",
-                    "Cavendish University Zambia",
-                    "Victoria University Kampala",
-                    "Victorious Education Services",
-                    "TREEZ Africa Systems",
-                    "Seeta University",
-                    "Cavendish University Uganda",
-                    "Cavendish University Zambia",
-                    "Victoria University Kampala",
-                    "Victorious Education Services",
-                    "TREEZ Africa Systems",
-                  ].map((name, index) => (
-                    <span
-                      key={index}
-                      className="inline-flex items-center gap-2 text-gray-500 font-semibold text-base"
-                    >
-                      <span className="w-2 h-2 rounded-full bg-gradient-to-r from-primary-500 to-accent-500 flex-shrink-0" />
-                      {name}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Enhanced Feature Badges with Stagger Animation */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 2.2 }}
-              className="flex flex-wrap items-center justify-center gap-4 text-sm text-gray-600"
-            >
-              {[
-                {
-                  icon: Shield,
-                  text: "Bank-Level Security",
-                  color: "text-blue-600",
-                },
-                { icon: Clock, text: "24/7 Support", color: "text-purple-600" },
-                {
-                  icon: CheckCircle2,
-                  text: "No Credit Card",
-                  color: "text-green-600",
-                },
-                { icon: Zap, text: "Instant Setup", color: "text-orange-600" },
-              ].map((item, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{
-                    duration: 0.5,
-                    delay: 2.3 + index * 0.1,
-                    type: "spring",
-                    stiffness: 100,
-                  }}
-                  whileHover={{ scale: 1.1, y: -3 }}
-                  className="flex items-center space-x-2 bg-white px-4 py-2 rounded-full shadow-md border border-gray-200"
-                >
-                  <motion.div
-                    animate={{
-                      scale: [1, 1.2, 1],
-                    }}
-                    transition={{
-                      duration: 2,
-                      repeat: Infinity,
-                      delay: index * 0.3,
-                    }}
-                  >
-                    <item.icon className={`w-4 h-4 ${item.color}`} />
-                  </motion.div>
-                  <span className="font-medium">{item.text}</span>
-                </motion.div>
-              ))}
-            </motion.div>
-          </motion.div>
-
-          {/* Hero Image/Dashboard Preview with Enhanced Animations */}
-          <motion.div
-            initial={{ opacity: 0, y: 60 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 1,
-              delay: 1.6,
-              type: "spring",
-              stiffness: 50,
-            }}
-            className="mt-20 relative"
-          >
-            {/* Floating orbs around preview */}
-            <motion.div
-              animate={{
-                y: [0, -20, 0],
-                rotate: [0, 360],
-              }}
-              transition={{
-                duration: 8,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-              className="absolute -top-10 -left-10 w-20 h-20 bg-gradient-to-br from-blue-400 to-cyan-400 rounded-full opacity-60 blur-xl"
-            />
-            <motion.div
-              animate={{
-                y: [0, 20, 0],
-                rotate: [360, 0],
-              }}
-              transition={{
-                duration: 10,
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: 1,
-              }}
-              className="absolute -bottom-10 -right-10 w-24 h-24 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full opacity-60 blur-xl"
-            />
-
-            <motion.div
-              whileHover={{ scale: 1.02, rotateX: 5, rotateY: 5 }}
-              transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              className="bg-gradient-to-br from-primary-600 via-indigo-600 to-accent-600 rounded-3xl shadow-2xl p-2 relative overflow-hidden"
-            >
-              {/* Animated gradient overlay */}
-              <motion.div
-                animate={{
-                  opacity: [0.5, 0.8, 0.5],
-                  scale: [1, 1.1, 1],
-                }}
-                transition={{
-                  duration: 4,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-                className="absolute inset-0 bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20 blur-xl"
-              />
-
-              <div className="bg-white rounded-2xl p-8 relative z-10">
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-                  {[
-                    {
-                      icon: QrCode,
-                      title: "QR Code",
-                      color: "from-blue-500 to-cyan-500",
-                      description:
-                        "Fast, secure, and reliable attendance tracking",
-                    },
-                    {
-                      icon: Radio,
-                      title: "RFID",
-                      color: "from-purple-500 to-pink-500",
-                      description: "Contactless proximity-based check-ins",
-                    },
-                    {
-                      icon: Scan,
-                      title: "Face Recognition",
-                      color: "from-orange-500 to-red-500",
-                      description: "AI-powered biometric authentication",
-                    },
-                    {
-                      icon: Mic,
-                      title: "Voice Over",
-                      color: "from-teal-500 to-green-500",
-                      description: "Voice-activated attendance capture",
-                    },
-                    {
-                      icon: Fingerprint,
-                      title: "Biometric",
-                      color: "from-amber-500 to-yellow-500",
-                      description: "Fingerprint-based identity verification",
-                    },
-                  ].map((tech, index) => (
-                    <motion.div
-                      key={tech.title}
-                      initial={{ opacity: 0, scale: 0.8, y: 20 }}
-                      animate={{ opacity: 1, scale: 1, y: 0 }}
-                      transition={{
-                        duration: 0.6,
-                        delay: 1.8 + index * 0.15,
-                        type: "spring",
-                        stiffness: 100,
-                      }}
-                      whileHover={{
-                        scale: 1.05,
-                        y: -5,
-                        transition: { duration: 0.2 },
-                      }}
-                      className="bg-gradient-to-br from-gray-50 to-white p-6 rounded-xl border border-gray-200 hover:shadow-xl transition-shadow relative overflow-hidden group"
-                    >
-                      {/* Hover gradient effect */}
-                      <motion.div
-                        className={`absolute inset-0 bg-gradient-to-br ${tech.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}
-                      />
-
-                      <motion.div
-                        className={`bg-gradient-to-br ${tech.color} p-3 rounded-lg w-fit mb-4 relative`}
-                        whileHover={{ rotate: [0, -10, 10, 0], scale: 1.1 }}
-                        transition={{ duration: 0.5 }}
-                      >
-                        <motion.div
-                          animate={{
-                            scale: [1, 1.2, 1],
-                            opacity: [0.5, 0.8, 0.5],
-                          }}
-                          transition={{
-                            duration: 2,
-                            repeat: Infinity,
-                            delay: index * 0.5,
-                          }}
-                          className={`absolute inset-0 bg-gradient-to-br ${tech.color} rounded-lg blur-lg`}
-                        />
-                        <tech.icon className="w-8 h-8 text-white relative z-10" />
-                      </motion.div>
-
-                      <motion.h3
-                        className="text-lg font-bold text-gray-900 mb-2"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 2 + index * 0.15 }}
-                      >
-                        {tech.title}
-                      </motion.h3>
-
-                      <motion.p
-                        className="text-sm text-gray-600"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 2.1 + index * 0.15 }}
-                      >
-                        {tech.description}
-                      </motion.p>
-
-                      {/* Animated corner accent */}
-                      <motion.div
-                        animate={{
-                          opacity: [0.3, 0.6, 0.3],
-                        }}
-                        transition={{
-                          duration: 3,
-                          repeat: Infinity,
-                          delay: index * 0.7,
-                        }}
-                        className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-transparent to-primary-100 rounded-bl-full opacity-0 group-hover:opacity-30 transition-opacity"
-                      />
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
+          </div>
         </div>
       </section>
 
@@ -975,7 +509,7 @@ export default function LandingPage() {
                 title: "Role-Based Access",
                 description:
                   "Separate dashboards for Admin, Teachers, and Class Representatives",
-                color: "from-purple-500 to-pink-500",
+                color: "from-primary-500 to-accent-500",
               },
               {
                 icon: Shield,
@@ -988,14 +522,14 @@ export default function LandingPage() {
                 title: "Mobile Ready",
                 description:
                   "Access from any device - desktop, tablet, or smartphone",
-                color: "from-indigo-500 to-blue-500",
+                color: "from-sky-500 to-blue-500",
               },
               {
                 icon: Clock,
                 title: "Automated Reports",
                 description:
                   "Generate and schedule attendance reports automatically",
-                color: "from-red-500 to-pink-500",
+                color: "from-red-500 to-accent-500",
               },
               {
                 icon: Globe,
@@ -1015,7 +549,7 @@ export default function LandingPage() {
                 icon: TrendingUp,
                 title: "Performance Tracking",
                 description: "Track attendance patterns and identify trends",
-                color: "from-violet-500 to-purple-500",
+                color: "from-accent-600 to-primary-500",
               },
             ].map((feature, index) => (
               <motion.div
@@ -1130,7 +664,7 @@ export default function LandingPage() {
         className="py-20 px-4 sm:px-6 lg:px-8 bg-slate-50/50 relative overflow-hidden"
       >
         <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-blue-100/30 rounded-full blur-3xl -z-10"></div>
-        <div className="absolute bottom-0 left-0 w-1/3 h-1/3 bg-purple-100/30 rounded-full blur-3xl -z-10"></div>
+        <div className="absolute bottom-0 left-0 w-1/3 h-1/3 bg-primary-100/30 rounded-full blur-3xl -z-10"></div>
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <motion.h2
@@ -1155,7 +689,7 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               {
-                name: "Starter",
+                name: "Genesis",
                 price: "UGX 500,000",
                 period: "/term",
                 description: "Perfect for small institutions",
@@ -1170,12 +704,12 @@ export default function LandingPage() {
                 popular: false,
               },
               {
-                name: "Professional",
+                name: "Genesis+",
                 price: "UGX 1,500,000",
                 period: "/term",
                 description: "For growing organizations",
                 features: [
-                  "Everything in Starter, plus:",
+                  "Everything in Genesis, plus:",
                   "Up to 500 users",
                   "Face Recognition",
                   "Biometric attendance",
@@ -1186,12 +720,12 @@ export default function LandingPage() {
                 popular: true,
               },
               {
-                name: "Enterprise",
+                name: "Genesis Pro+",
                 price: "Custom",
                 period: "",
                 description: "For large institutions",
                 features: [
-                  "Everything in Professional, plus:",
+                  "Everything in Genesis+, plus:",
                   "Unlimited users",
                   "Voice Over attendance",
                   "Premium analytics",
@@ -1217,7 +751,7 @@ export default function LandingPage() {
               >
                 {plan.popular && (
                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                    <span className="bg-gradient-to-r from-primary-600 to-accent-600 text-white px-4 py-1 rounded-full text-sm font-semibold shadow-md">
+                    <span className="bg-primary-50 text-primary-600 border border-primary-100 px-4 py-1 rounded-full text-sm font-semibold shadow-md">
                       Most Popular
                     </span>
                   </div>
@@ -1365,11 +899,11 @@ export default function LandingPage() {
             whileInView={{ opacity: 1, scale: 1, y: 0 }}
             viewport={{ once: true }}
             whileHover={{ scale: 1.02 }}
-            className="bg-gradient-to-r from-primary-600 to-accent-600 rounded-3xl p-12 text-center text-white shadow-2xl relative overflow-hidden"
+            className="bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800 text-white border border-primary-500/40 rounded-3xl p-12 text-center shadow-2xl relative overflow-hidden"
           >
             {/* Decorative circles */}
-            <div className="absolute top-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
-            <div className="absolute bottom-0 right-0 w-64 h-64 bg-black/10 rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
+            <div className="absolute top-0 left-0 w-64 h-64 bg-white/15 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
+            <div className="absolute bottom-0 right-0 w-64 h-64 bg-black/20 rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
 
             <h2 className="text-4xl md:text-5xl font-bold mb-6 relative z-10">
               Ready to Transform Your Attendance?

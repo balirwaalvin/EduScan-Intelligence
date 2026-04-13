@@ -11,7 +11,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "create-admin": "tsx create-admin.ts"
+    "create-admin": "tsx create-admin.ts",
+    "setup:courses": "node appwrite-setup-courses.js"
   },
   "keywords": [],
   "author": "",

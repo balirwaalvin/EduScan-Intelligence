@@ -348,7 +348,7 @@ export default function SettingsPage() {
     <DashboardLayout role="ADMIN" user={user}>
       <div className="space-y-6">
         {/* Header */}
-        <div className="bg-gradient-to-r from-primary-600 to-accent-600 rounded-2xl p-8 text-white">
+        <div className="bg-primary-50 text-primary-600 border border-primary-100 rounded-2xl p-8">
           <div className="flex items-center space-x-4">
             <div className="bg-white/20 p-4 rounded-xl">
               <SettingsIcon className="w-8 h-8" />
@@ -542,7 +542,7 @@ export default function SettingsPage() {
                   <button
                     type="submit"
                     disabled={saving}
-                    className="bg-gradient-to-r from-primary-600 to-accent-600 text-white px-6 py-3 rounded-lg font-medium hover:shadow-lg transition disabled:opacity-50 flex items-center space-x-2"
+                    className="bg-primary-50 text-primary-600 border border-primary-100 px-6 py-3 rounded-lg font-medium hover:shadow-lg transition disabled:opacity-50 flex items-center space-x-2"
                   >
                     <Save className="w-5 h-5" />
                     <span>{saving ? 'Saving...' : 'Save Profile'}</span>
@@ -640,7 +640,7 @@ export default function SettingsPage() {
                   <button
                     type="submit"
                     disabled={saving}
-                    className="bg-gradient-to-r from-primary-600 to-accent-600 text-white px-6 py-3 rounded-lg font-medium hover:shadow-lg transition disabled:opacity-50 flex items-center space-x-2"
+                    className="bg-primary-50 text-primary-600 border border-primary-100 px-6 py-3 rounded-lg font-medium hover:shadow-lg transition disabled:opacity-50 flex items-center space-x-2"
                   >
                     <Save className="w-5 h-5" />
                     <span>{saving ? 'Saving...' : 'Save Organization'}</span>
@@ -708,7 +708,7 @@ export default function SettingsPage() {
                   <button
                     type="submit"
                     disabled={saving}
-                    className="bg-gradient-to-r from-primary-600 to-accent-600 text-white px-6 py-3 rounded-lg font-medium hover:shadow-lg transition disabled:opacity-50 flex items-center space-x-2"
+                    className="bg-primary-50 text-primary-600 border border-primary-100 px-6 py-3 rounded-lg font-medium hover:shadow-lg transition disabled:opacity-50 flex items-center space-x-2"
                   >
                     <Save className="w-5 h-5" />
                     <span>{saving ? 'Saving...' : 'Save Preferences'}</span>
@@ -836,7 +836,7 @@ export default function SettingsPage() {
                   <button
                     type="submit"
                     disabled={saving}
-                    className="bg-gradient-to-r from-primary-600 to-accent-600 text-white px-6 py-3 rounded-lg font-medium hover:shadow-lg transition disabled:opacity-50 flex items-center space-x-2"
+                    className="bg-primary-50 text-primary-600 border border-primary-100 px-6 py-3 rounded-lg font-medium hover:shadow-lg transition disabled:opacity-50 flex items-center space-x-2"
                   >
                     <Save className="w-5 h-5" />
                     <span>{saving ? 'Saving...' : 'Save System Settings'}</span>

@@ -283,7 +283,7 @@ export default function DepartmentsPage() {
             </div>
             <button
               onClick={() => setShowCreateModal(true)}
-              className="bg-gradient-to-r from-primary-600 to-accent-600 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition flex items-center space-x-2"
+              className="bg-primary-50 text-primary-600 border border-primary-100 px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition flex items-center space-x-2"
             >
               <Plus className="w-5 h-5" />
               <span>Add Department</span>
@@ -343,7 +343,7 @@ export default function DepartmentsPage() {
               className="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition"
             >
               <div className="flex items-start justify-between mb-4">
-                <div className="bg-gradient-to-br from-primary-600 to-accent-600 p-3 rounded-lg">
+                <div className="bg-primary-50 text-primary-600 border border-primary-100 p-3 rounded-xl">
                   <Building2 className="w-6 h-6 text-white" />
                 </div>
                 <div className="flex space-x-2">

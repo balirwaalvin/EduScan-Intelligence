@@ -23,6 +23,8 @@ export default function CoursesPage() {
   const [loading, setLoading] = useState(true)
   const [courses, setCourses] = useState<any[]>([])
   const [filteredCourses, setFilteredCourses] = useState<any[]>([])
+  const [departments, setDepartments] = useState<any[]>([])
+  const [programs, setPrograms] = useState<any[]>([])
   const [searchQuery, setSearchQuery] = useState('')
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
@@ -32,8 +34,10 @@ export default function CoursesPage() {
     code: '',
     description: '',
     departmentId: '',
+    programId: '',
   })
   const [submitting, setSubmitting] = useState(false)
+  const [schemaInitializing, setSchemaInitializing] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
 
@@ -42,13 +46,53 @@ export default function CoursesPage() {
       const response = await fetch(`/api/courses?organizationId=${organizationId}`)
       if (response.ok) {
         const data = await response.json()
-        setCourses(data.courses)
-        setFilteredCourses(data.courses)
+        const items = data.courses || []
+        setCourses(items)
+        setFilteredCourses(items)
+      } else {
+        setError('Failed to load courses')
       }
     } catch (error) {
       console.error('Error fetching courses:', error)
+      setError('Error connecting to server')
     }
   }
+
+  const fetchDepartments = async (organizationId: string) => {
+    try {
+      const response = await fetch(`/api/departments?organizationId=${organizationId}`)
+      if (response.ok) {
+        const data = await response.json()
+        setDepartments(data.departments || [])
+      }
+    } catch (error) {
+      console.error('Error fetching departments:', error)
+    }
+  }
+
+  const fetchPrograms = async (organizationId: string) => {
+    try {
+      const response = await fetch(`/api/programs?organizationId=${organizationId}`)
+      if (response.ok) {
+        const data = await response.json()
+        setPrograms(data.programs || [])
+      }
+    } catch (error) {
+      console.error('Error fetching programs:', error)
+    }
+  }
+
+  const getDepartmentName = (departmentId: string) => {
+    return departments.find((department) => department.$id === departmentId)?.name || 'No Department'
+  }
+
+  const getProgramName = (programId: string) => {
+    return programs.find((program) => program.$id === programId)?.name || 'No Program'
+  }
+
+  const availablePrograms = programs.filter(
+    (program) => !formData.departmentId || program.departmentId === formData.departmentId
+  )
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -64,7 +108,12 @@ export default function CoursesPage() {
           name: currentUser.name,
           email: currentUser.email,
         })
-        await fetchCourses(currentUser.$id)
+
+        await Promise.all([
+          fetchCourses(currentUser.$id),
+          fetchDepartments(currentUser.$id),
+          fetchPrograms(currentUser.$id),
+        ])
       } catch (error) {
         router.push('/login')
       } finally {
@@ -77,16 +126,51 @@ export default function CoursesPage() {
 
   useEffect(() => {
     if (searchQuery) {
+      const lowerQuery = searchQuery.toLowerCase()
       const filtered = courses.filter(
-        (c) =>
-          c.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          c.code?.toLowerCase().includes(searchQuery.toLowerCase())
+        (course) =>
+          course.name?.toLowerCase().includes(lowerQuery) ||
+          course.code?.toLowerCase().includes(lowerQuery) ||
+          getDepartmentName(course.departmentId).toLowerCase().includes(lowerQuery) ||
+          getProgramName(course.programId).toLowerCase().includes(lowerQuery)
       )
       setFilteredCourses(filtered)
     } else {
       setFilteredCourses(courses)
     }
-  }, [courses, searchQuery])
+  }, [courses, searchQuery, departments, programs])
+
+  const handleDepartmentChange = (departmentId: string) => {
+    setFormData({
+      ...formData,
+      departmentId,
+      programId: '',
+    })
+  }
+
+  const handleProgramChange = (programId: string) => {
+    const selectedProgram = programs.find((program) => program.$id === programId)
+
+    setFormData({
+      ...formData,
+      programId,
+      departmentId: selectedProgram?.departmentId || formData.departmentId,
+    })
+  }
+
+  const buildPayload = () => {
+    const selectedProgram = programs.find((program) => program.$id === formData.programId)
+    const resolvedDepartmentId = formData.departmentId || selectedProgram?.departmentId || ''
+
+    return {
+      name: formData.name,
+      code: formData.code,
+      description: formData.description,
+      departmentId: resolvedDepartmentId,
+      programId: formData.programId,
+      organizationId: user.id,
+    }
+  }
 
   const handleCreateCourse = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -98,16 +182,13 @@ export default function CoursesPage() {
       const response = await fetch('/api/courses', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...formData,
-          organizationId: user.id,
-        }),
+        body: JSON.stringify(buildPayload()),
       })
 
       if (response.ok) {
         setSuccess('Course created successfully!')
         setShowCreateModal(false)
-        setFormData({ name: '', code: '', description: '', departmentId: '' })
+        setFormData({ name: '', code: '', description: '', departmentId: '', programId: '' })
         await fetchCourses(user.id)
       } else {
         const data = await response.json()
@@ -132,7 +213,7 @@ export default function CoursesPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           courseId: selectedCourse.$id,
-          ...formData,
+          ...buildPayload(),
         }),
       })
 
@@ -171,6 +252,12 @@ export default function CoursesPage() {
     }
   }
 
+  const openCreateModal = () => {
+    setSelectedCourse(null)
+    setFormData({ name: '', code: '', description: '', departmentId: '', programId: '' })
+    setShowCreateModal(true)
+  }
+
   const openEditModal = (course: any) => {
     setSelectedCourse(course)
     setFormData({
@@ -178,8 +265,34 @@ export default function CoursesPage() {
       code: course.code,
       description: course.description || '',
       departmentId: course.departmentId || '',
+      programId: course.programId || '',
     })
     setShowEditModal(true)
+  }
+
+  const handleInitializeCourseSchema = async () => {
+    setSchemaInitializing(true)
+    setError('')
+    setSuccess('')
+
+    try {
+      const response = await fetch('/api/setup/create-course-attribute', {
+        method: 'POST',
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        setSuccess(data.message || 'Course schema initialized successfully!')
+        await fetchCourses(user.id)
+      } else {
+        setError(data.error || 'Failed to initialize course schema')
+      }
+    } catch (error: any) {
+      setError(error.message)
+    } finally {
+      setSchemaInitializing(false)
+    }
   }
 
   if (loading) {
@@ -196,24 +309,35 @@ export default function CoursesPage() {
   return (
     <DashboardLayout role="ADMIN" user={user}>
       <div className="space-y-6">
-        {/* Header */}
         <div className="bg-white rounded-xl shadow-sm p-6">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Courses</h1>
-              <p className="text-gray-600 mt-1">Manage academic courses and programs</p>
+              <p className="text-gray-600 mt-1">Manage academic courses, departments, and programs</p>
             </div>
             <button
-              onClick={() => setShowCreateModal(true)}
-              className="bg-gradient-to-r from-primary-600 to-accent-600 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition flex items-center space-x-2"
+              onClick={openCreateModal}
+              className="bg-primary-50 text-primary-600 border border-primary-100 px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition flex items-center space-x-2"
             >
               <Plus className="w-5 h-5" />
               <span>Add Course</span>
             </button>
           </div>
+          <div className="mt-4 flex items-center justify-between gap-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
+            <p className="text-sm text-amber-900">
+              If the Courses collection is missing <span className="font-semibold">programId</span>, initialize it here.
+            </p>
+            <button
+              type="button"
+              onClick={handleInitializeCourseSchema}
+              disabled={schemaInitializing}
+              className="shrink-0 rounded-lg bg-amber-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-amber-700 disabled:opacity-50"
+            >
+              {schemaInitializing ? 'Initializing...' : 'Initialize Schema'}
+            </button>
+          </div>
         </div>
 
-        {/* Success/Error Messages */}
         <AnimatePresence>
           {success && (
             <motion.div
@@ -239,7 +363,6 @@ export default function CoursesPage() {
           )}
         </AnimatePresence>
 
-        {/* Search */}
         <div className="bg-white rounded-xl shadow-sm p-6">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -257,7 +380,6 @@ export default function CoursesPage() {
           </p>
         </div>
 
-        {/* Courses Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredCourses.map((course) => (
             <div
@@ -265,8 +387,8 @@ export default function CoursesPage() {
               className="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition"
             >
               <div className="flex items-start justify-between mb-4">
-                <div className="bg-gradient-to-br from-purple-600 to-pink-600 p-3 rounded-lg">
-                  <BookOpen className="w-6 h-6 text-white" />
+                <div className="bg-primary-50 text-primary-600 border border-primary-100 p-3 rounded-xl">
+                  <BookOpen className="w-6 h-6 text-primary-600" />
                 </div>
                 <div className="flex space-x-2">
                   <button
@@ -290,10 +412,14 @@ export default function CoursesPage() {
                 <p className="text-sm text-gray-500 mb-4 line-clamp-2">{course.description}</p>
               )}
 
-              <div className="flex items-center justify-between pt-4 border-t text-sm text-gray-600">
+              <div className="space-y-2 pt-4 border-t text-sm text-gray-600">
                 <div className="flex items-center space-x-1">
                   <Building2 className="w-4 h-4" />
-                  <span>Department</span>
+                  <span>{getDepartmentName(course.departmentId)}</span>
+                </div>
+                <div className="flex items-center space-x-1">
+                  <BookOpen className="w-4 h-4" />
+                  <span>{getProgramName(course.programId)}</span>
                 </div>
                 <div className="flex items-center space-x-1">
                   <Users className="w-4 h-4" />
@@ -312,7 +438,6 @@ export default function CoursesPage() {
           </div>
         )}
 
-        {/* Create Course Modal */}
         <AnimatePresence>
           {showCreateModal && (
             <motion.div
@@ -341,9 +466,7 @@ export default function CoursesPage() {
 
                 <form onSubmit={handleCreateCourse} className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Course Name
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Course Name</label>
                     <input
                       type="text"
                       required
@@ -355,17 +478,52 @@ export default function CoursesPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Course Code
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Course Code</label>
                     <input
                       type="text"
                       required
                       value={formData.code}
-                      onChange={(e) => setFormData({ ...formData, code: e.target.value })}
+                      onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
                       placeholder="e.g., CS101"
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                     />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Department</label>
+                    <select
+                      required
+                      value={formData.departmentId}
+                      onChange={(e) => handleDepartmentChange(e.target.value)}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    >
+                      <option value="">Select department</option>
+                      {departments.map((department) => (
+                        <option key={department.$id} value={department.$id}>
+                          {department.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Program Offered</label>
+                    <select
+                      required
+                      value={formData.programId}
+                      onChange={(e) => handleProgramChange(e.target.value)}
+                      disabled={!formData.departmentId}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 disabled:bg-gray-100"
+                    >
+                      <option value="">
+                        {formData.departmentId ? 'Select program' : 'Select a department first'}
+                      </option>
+                      {availablePrograms.map((program) => (
+                        <option key={program.$id} value={program.$id}>
+                          {program.name}
+                        </option>
+                      ))}
+                    </select>
                   </div>
 
                   <div>
@@ -403,7 +561,6 @@ export default function CoursesPage() {
           )}
         </AnimatePresence>
 
-        {/* Edit Course Modal */}
         <AnimatePresence>
           {showEditModal && selectedCourse && (
             <motion.div
@@ -432,9 +589,7 @@ export default function CoursesPage() {
 
                 <form onSubmit={handleEditCourse} className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Course Name
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Course Name</label>
                     <input
                       type="text"
                       required
@@ -445,16 +600,51 @@ export default function CoursesPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Course Code
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Course Code</label>
                     <input
                       type="text"
                       required
                       value={formData.code}
-                      onChange={(e) => setFormData({ ...formData, code: e.target.value })}
+                      onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                     />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Department</label>
+                    <select
+                      required
+                      value={formData.departmentId}
+                      onChange={(e) => handleDepartmentChange(e.target.value)}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    >
+                      <option value="">Select department</option>
+                      {departments.map((department) => (
+                        <option key={department.$id} value={department.$id}>
+                          {department.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Program Offered</label>
+                    <select
+                      required
+                      value={formData.programId}
+                      onChange={(e) => handleProgramChange(e.target.value)}
+                      disabled={!formData.departmentId}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 disabled:bg-gray-100"
+                    >
+                      <option value="">
+                        {formData.departmentId ? 'Select program' : 'Select a department first'}
+                      </option>
+                      {availablePrograms.map((program) => (
+                        <option key={program.$id} value={program.$id}>
+                          {program.name}
+                        </option>
+                      ))}
+                    </select>
                   </div>
 
                   <div>

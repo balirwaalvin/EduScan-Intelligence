@@ -7,7 +7,7 @@ export default function TermsOfServicePage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <div className="bg-gradient-to-r from-primary-600 to-accent-600 text-white py-16 px-4 sm:px-6 lg:px-8">
+      <div className="bg-primary-50 text-primary-600 border border-primary-100 py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           <Link
             href="/"

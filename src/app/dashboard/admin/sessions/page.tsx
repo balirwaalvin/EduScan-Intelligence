@@ -204,7 +204,7 @@ export default function SessionsPage() {
     <DashboardLayout role="ADMIN" user={user}>
       <div className="space-y-6">
         {/* Header */}
-        <div className="bg-gradient-to-r from-primary-600 to-accent-600 rounded-2xl p-8 text-white">
+        <div className="bg-primary-50 text-primary-600 border border-primary-100 rounded-2xl p-8">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold mb-2">Sessions Management</h1>

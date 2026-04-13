@@ -6,7 +6,7 @@ export default function BackgroundGradient() {
   return (
     <div className="fixed inset-0 w-full h-full pointer-events-none -z-10 overflow-hidden bg-slate-50">
       {/* Base Gradient Layer */}
-      <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/50 via-white to-purple-50/50 opacity-80" />
+      <div className="absolute inset-0 bg-gradient-to-br from-sky-50/50 via-white to-primary-50/50 opacity-80" />
 
       {/* Aurora Layer 1 - Primary */}
       <motion.div
@@ -23,7 +23,7 @@ export default function BackgroundGradient() {
           repeatType: 'reverse',
           ease: 'easeInOut',
         }}
-        className="absolute -top-[20%] -left-[10%] w-[70vw] h-[70vw] bg-gradient-to-r from-primary-300/30 to-indigo-300/30 rounded-full mix-blend-multiply filter blur-[80px] opacity-60 will-change-transform"
+        className="absolute -top-[20%] -left-[10%] w-[70vw] h-[70vw] bg-gradient-to-r from-primary-300/30 to-sky-300/30 rounded-full mix-blend-multiply filter blur-[80px] opacity-60 will-change-transform"
       />
 
       {/* Aurora Layer 2 - Accent */}
@@ -41,7 +41,7 @@ export default function BackgroundGradient() {
           repeatType: 'reverse',
           ease: 'easeInOut',
         }}
-        className="absolute top-[20%] -right-[10%] w-[60vw] h-[60vw] bg-gradient-to-l from-accent-300/30 to-purple-300/30 rounded-full mix-blend-multiply filter blur-[80px] opacity-60 will-change-transform"
+        className="absolute top-[20%] -right-[10%] w-[60vw] h-[60vw] bg-gradient-to-l from-accent-300/30 to-primary-300/30 rounded-full mix-blend-multiply filter blur-[80px] opacity-60 will-change-transform"
       />
 
       {/* Aurora Layer 3 - Purple Bottom */}
@@ -59,7 +59,7 @@ export default function BackgroundGradient() {
           repeatType: 'reverse',
           ease: 'easeInOut',
         }}
-        className="absolute -bottom-[20%] left-[20%] w-[80vw] h-[80vw] bg-gradient-to-t from-purple-300/30 to-blue-300/30 rounded-full mix-blend-multiply filter blur-[80px] opacity-60 will-change-transform"
+        className="absolute -bottom-[20%] left-[20%] w-[80vw] h-[80vw] bg-gradient-to-t from-primary-300/30 to-blue-300/30 rounded-full mix-blend-multiply filter blur-[80px] opacity-60 will-change-transform"
       />
 
       {/* Center Subtle Pulse */}
