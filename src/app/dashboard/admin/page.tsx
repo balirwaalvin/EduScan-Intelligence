@@ -200,14 +200,14 @@ export default function AdminDashboard() {
               <h1 className="text-3xl font-bold mb-2">
                 Welcome back, {user?.name}! 👋
               </h1>
-              <p className="text-white/90">
+              <p className="text-primary-700">
                 Here's what's happening with your organization today.
               </p>
             </div>
             <button
               onClick={handleRefresh}
               disabled={refreshing}
-              className="bg-white/20 hover:bg-white/30 p-3 rounded-lg transition disabled:opacity-50"
+              className="bg-primary-100 hover:bg-primary-200 p-3 rounded-lg transition disabled:opacity-50"
             >
               <RefreshCw className={`w-6 h-6 ${refreshing ? 'animate-spin' : ''}`} />
             </button>
